@@ -3,10 +3,14 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 53;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D3EA2F624D58667008C7495 /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3EA2F524D58667008C7495 /* VisualEffectView.swift */; };
+		4D3EA31824D6CE34008C7495 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3EA31724D6CE34008C7495 /* Settings.swift */; };
+		4D3EA34124D6D49C008C7495 /* Scrib Launcher.app in Copy Launcher */ = {isa = PBXBuildFile; fileRef = 4D3EA33D24D6D315008C7495 /* Scrib Launcher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		4D3EA34A24D85F68008C7495 /* NSTextField+FocusRing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3EA34924D85F68008C7495 /* NSTextField+FocusRing.swift */; };
 		4D3FF30424D35F3000B19651 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FF30324D35F3000B19651 /* AppDelegate.swift */; };
 		4D3FF30624D35F3000B19651 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FF30524D35F3000B19651 /* SettingsView.swift */; };
 		4D3FF30824D35F3400B19651 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D3FF30724D35F3400B19651 /* Assets.xcassets */; };
@@ -16,9 +20,38 @@
 		4D3FF31B24D428A800B19651 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FF31A24D428A700B19651 /* AlertView.swift */; };
 		4D3FF31D24D42B3100B19651 /* AppDelegate+MenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FF31C24D42B3100B19651 /* AppDelegate+MenuItem.swift */; };
 		4D3FF31F24D42E8900B19651 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FF31E24D42E8800B19651 /* main.swift */; };
+		615F0FA6FF81EA8F4693CC23 /* Pods_Scrib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F5722651C4EFDB70774E079 /* Pods_Scrib.framework */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		4D3EA33C24D6D315008C7495 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4D3EA33824D6D314008C7495 /* Scrib Launcher.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 4D3EA32224D6D310008C7495;
+			remoteInfo = "Scrib Launcher";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4D3EA34024D6D472008C7495 /* Copy Launcher */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = Contents/Library/LoginItems;
+			dstSubfolderSpec = 1;
+			files = (
+				4D3EA34124D6D49C008C7495 /* Scrib Launcher.app in Copy Launcher */,
+			);
+			name = "Copy Launcher";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		4D3EA2F524D58667008C7495 /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
+		4D3EA31724D6CE34008C7495 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		4D3EA33824D6D314008C7495 /* Scrib Launcher.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Scrib Launcher.xcodeproj"; path = "Scrib Launcher/Scrib Launcher.xcodeproj"; sourceTree = "<group>"; };
+		4D3EA34924D85F68008C7495 /* NSTextField+FocusRing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSTextField+FocusRing.swift"; sourceTree = "<group>"; };
 		4D3FF30024D35F3000B19651 /* Scrib.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Scrib.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D3FF30324D35F3000B19651 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4D3FF30524D35F3000B19651 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
@@ -31,6 +64,9 @@
 		4D3FF31A24D428A700B19651 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
 		4D3FF31C24D42B3100B19651 /* AppDelegate+MenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+MenuItem.swift"; sourceTree = "<group>"; };
 		4D3FF31E24D42E8800B19651 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		5F5722651C4EFDB70774E079 /* Pods_Scrib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Scrib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		941501D9EEA8539269562114 /* Pods-Scrib.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Scrib.debug.xcconfig"; path = "Target Support Files/Pods-Scrib/Pods-Scrib.debug.xcconfig"; sourceTree = "<group>"; };
+		EB79A4AE5D1067A5EE0C3E38 /* Pods-Scrib.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Scrib.release.xcconfig"; path = "Target Support Files/Pods-Scrib/Pods-Scrib.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,17 +74,54 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				615F0FA6FF81EA8F4693CC23 /* Pods_Scrib.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		367B91777A87483555834634 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				941501D9EEA8539269562114 /* Pods-Scrib.debug.xcconfig */,
+				EB79A4AE5D1067A5EE0C3E38 /* Pods-Scrib.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		4D3EA2D424D583DD008C7495 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				4D3FF30724D35F3400B19651 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		4D3EA33924D6D314008C7495 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				4D3EA33D24D6D315008C7495 /* Scrib Launcher.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		4D3EA34724D85F54008C7495 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				4D3EA34924D85F68008C7495 /* NSTextField+FocusRing.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		4D3FF2F724D35F3000B19651 = {
 			isa = PBXGroup;
 			children = (
+				4D3EA33824D6D314008C7495 /* Scrib Launcher.xcodeproj */,
 				4D3FF30224D35F3000B19651 /* Scrib */,
 				4D3FF30124D35F3000B19651 /* Products */,
+				367B91777A87483555834634 /* Pods */,
+				D4CA3EE8E3D48FAA21D7F403 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -63,13 +136,15 @@
 		4D3FF30224D35F3000B19651 /* Scrib */ = {
 			isa = PBXGroup;
 			children = (
+				4D3EA34724D85F54008C7495 /* Extensions */,
+				4D3EA2D424D583DD008C7495 /* Resources */,
 				4D3FF32124D4300500B19651 /* AppDelegate */,
 				4D3FF32024D42FF200B19651 /* Views */,
-				4D3FF30724D35F3400B19651 /* Assets.xcassets */,
 				4D3FF30F24D35F3400B19651 /* Info.plist */,
 				4D3FF31024D35F3400B19651 /* Scrib.entitlements */,
 				4D3FF30924D35F3400B19651 /* Preview Content */,
 				4D3FF31E24D42E8800B19651 /* main.swift */,
+				4D3EA31724D6CE34008C7495 /* Settings.swift */,
 			);
 			path = Scrib;
 			sourceTree = "<group>";
@@ -89,6 +164,7 @@
 				4D3FF31624D427BD00B19651 /* OnboardingView.swift */,
 				4D3FF31824D4283900B19651 /* TagView.swift */,
 				4D3FF31A24D428A700B19651 /* AlertView.swift */,
+				4D3EA2F524D58667008C7495 /* VisualEffectView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -102,6 +178,14 @@
 			path = AppDelegate;
 			sourceTree = "<group>";
 		};
+		D4CA3EE8E3D48FAA21D7F403 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5F5722651C4EFDB70774E079 /* Pods_Scrib.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -109,9 +193,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 4D3FF31324D35F3400B19651 /* Build configuration list for PBXNativeTarget "Scrib" */;
 			buildPhases = (
+				F0C8A9E9D8F1C0592ABB4221 /* [CP] Check Pods Manifest.lock */,
 				4D3FF2FC24D35F3000B19651 /* Sources */,
 				4D3FF2FD24D35F3000B19651 /* Frameworks */,
 				4D3FF2FE24D35F3000B19651 /* Resources */,
+				4D3EA34024D6D472008C7495 /* Copy Launcher */,
+				6AA5E02A3FC54832FFA2E332 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -138,22 +225,40 @@
 				};
 			};
 			buildConfigurationList = 4D3FF2FB24D35F3000B19651 /* Build configuration list for PBXProject "Scrib" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 11.4";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
 				Base,
+				"en-GB",
+				es,
 			);
 			mainGroup = 4D3FF2F724D35F3000B19651;
 			productRefGroup = 4D3FF30124D35F3000B19651 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 4D3EA33924D6D314008C7495 /* Products */;
+					ProjectRef = 4D3EA33824D6D314008C7495 /* Scrib Launcher.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				4D3FF2FF24D35F3000B19651 /* Scrib */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		4D3EA33D24D6D315008C7495 /* Scrib Launcher.app */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.application;
+			path = "Scrib Launcher.app";
+			remoteRef = 4D3EA33C24D6D315008C7495 /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		4D3FF2FE24D35F3000B19651 /* Resources */ = {
@@ -167,6 +272,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		6AA5E02A3FC54832FFA2E332 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Scrib/Pods-Scrib-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Scrib/Pods-Scrib-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Scrib/Pods-Scrib-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F0C8A9E9D8F1C0592ABB4221 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Scrib-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		4D3FF2FC24D35F3000B19651 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -177,6 +324,9 @@
 				4D3FF31724D427BD00B19651 /* OnboardingView.swift in Sources */,
 				4D3FF30624D35F3000B19651 /* SettingsView.swift in Sources */,
 				4D3FF30424D35F3000B19651 /* AppDelegate.swift in Sources */,
+				4D3EA2F624D58667008C7495 /* VisualEffectView.swift in Sources */,
+				4D3EA31824D6CE34008C7495 /* Settings.swift in Sources */,
+				4D3EA34A24D85F68008C7495 /* NSTextField+FocusRing.swift in Sources */,
 				4D3FF31F24D42E8900B19651 /* main.swift in Sources */,
 				4D3FF31924D4283900B19651 /* TagView.swift in Sources */,
 			);
@@ -300,6 +450,7 @@
 		};
 		4D3FF31424D35F3400B19651 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 941501D9EEA8539269562114 /* Pods-Scrib.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Scrib/Scrib.entitlements;
@@ -323,6 +474,7 @@
 		};
 		4D3FF31524D35F3400B19651 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = EB79A4AE5D1067A5EE0C3E38 /* Pods-Scrib.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Scrib/Scrib.entitlements;

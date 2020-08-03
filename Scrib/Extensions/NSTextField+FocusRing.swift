@@ -1,5 +1,5 @@
 //
-//  TagView.swift
+//  NSTextField+FocusRing.swift
 //  Scrib
 //
 //  Copyright © 2020 Mark Bourke.
@@ -23,10 +23,11 @@
 //  THE SOFTWARE
 //
 
-import SwiftUI
+import Cocoa
 
-struct TagView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+extension NSTextField {
+    open override var focusRingType: NSFocusRingType {
+        get { .none }
+        set { }
     }
 }

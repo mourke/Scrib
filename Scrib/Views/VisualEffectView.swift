@@ -1,5 +1,5 @@
 //
-//  TagView.swift
+//  VisualEffectView.swift
 //  Scrib
 //
 //  Copyright © 2020 Mark Bourke.
@@ -25,8 +25,34 @@
 
 import SwiftUI
 
-struct TagView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+
+struct VisualEffectView<Content: View> : NSViewRepresentable {
+    
+    let material: NSVisualEffectView.Material
+    let blendingMode: NSVisualEffectView.BlendingMode
+    let content: Content
+    
+    @inlinable init(material: NSVisualEffectView.Material, blendingMode: NSVisualEffectView.BlendingMode, @ViewBuilder content: () -> Content) {
+        self.material = material
+        self.blendingMode = blendingMode
+        self.content = content()
+    }
+    
+
+    func makeNSView(context: Context) -> NSVisualEffectView {
+        let visualEffectView = NSVisualEffectView()
+        visualEffectView.material = material
+        visualEffectView.blendingMode = blendingMode
+        visualEffectView.state = .active
+        visualEffectView.isEmphasized = true
+        let view = NSHostingView(rootView: content)
+        view.autoresizingMask = [.height, .width]
+        visualEffectView.addSubview(view)
+        return visualEffectView
+    }
+
+    func updateNSView(_ visualEffectView: NSVisualEffectView, context: Context) {
+        visualEffectView.material = material
+        visualEffectView.blendingMode = blendingMode
     }
 }

@@ -26,6 +26,7 @@
 import Cocoa
 import SwiftUI
 import OSLog
+import LastFMKit
 
 extension AppDelegate {
     
@@ -51,7 +52,7 @@ extension AppDelegate {
         tagMenuItem = menu.addItem(withTitle: "Tag...", action: #selector(displayTagWindow), keyEquivalent: "T")
         favouriteMenuItem.keyEquivalentModifierMask = [.command]
         tagMenuItem.keyEquivalentModifierMask = [.command]
-        tagMenuItem.isEnabled = false // enable once a song plays
+        //tagMenuItem.isEnabled = false // enable once a song plays
         favouriteMenuItem.isEnabled = false // enable once a song plays
         menu.addItem(.separator())
         
@@ -59,7 +60,8 @@ extension AppDelegate {
         profileMenuItem.isEnabled = false // enable once a user is authenticated
         menu.addItem(.separator())
         
-        menu.addItem(withTitle: "Settings", action: #selector(displaySettingsWindow), keyEquivalent: "")
+        let settingsMenuItem = menu.addItem(withTitle: "Settings", action: #selector(displaySettingsWindow), keyEquivalent: ",")
+        settingsMenuItem.keyEquivalentModifierMask = [.command]
         menu.addItem(.separator())
         
         menu.addItem(withTitle: "Quit", action: #selector(quitApp), keyEquivalent: "")
@@ -79,17 +81,28 @@ extension AppDelegate {
     
     /// Called when the "Favourite" status item is pressed.
     @objc func favouriteSong() {
-        // TODO: call api
+        // TODO: API call
+        let alertView = AlertView(imageName: "Heart", text: "Favourited")
         
-        let alertView = AlertView()
-        let alertWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
+        let alertWindow = NSWindow(contentRect: NSRect(origin: .zero, size: CGSize(width: 200, height: 200)),
                                   styleMask: [.fullSizeContentView],
                                   backing: .buffered, defer: false)
-        alertWindow.center()
+        alertWindow.collectionBehavior = .transient
         alertWindow.contentView = NSHostingView(rootView: alertView)
-        activeWindow = alertWindow
+        alertWindow.isOpaque = false
+        alertWindow.backgroundColor = .clear
+        alertWindow.hasShadow = false
+        alertWindow.center()
+        self.activeWindow = alertWindow
         
-        // TODO: auto fade the view out and return control to previous app
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5) {
+            NSAnimationContext.runAnimationGroup({ [weak self] (context) in
+                context.duration = 0.8
+                self?.activeWindow?.animator().alphaValue = 0.0
+            }) { [weak self] in
+                self?.activeWindow = nil
+            }
+        }
     }
     
     /// Called when the "Settings" status item is pressed.
@@ -107,7 +120,9 @@ extension AppDelegate {
     
     /// Called when the "Go to Last.fm profile" status item is pressed.
     @objc func openProfileUrl() {
-        
+        if let username = Settings.manager.user?.username {
+            NSWorkspace.shared.open(URL(string: "https://www.last.fm/user/\(username)")!)
+        }
     }
     
     /// Called when the "Quit" status item is pressed.

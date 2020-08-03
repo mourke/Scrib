@@ -1,6 +1,6 @@
 //
-//  TagView.swift
-//  Scrib
+//  AppDelegate.swift
+//  Scrib Launcher
 //
 //  Copyright © 2020 Mark Bourke.
 //
@@ -23,10 +23,33 @@
 //  THE SOFTWARE
 //
 
-import SwiftUI
+import Cocoa
 
-struct TagView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+class AppDelegate: NSObject, NSApplicationDelegate {
+
+    func applicationDidFinishLaunching(_ aNotification: Notification) {
+        var alreadyRunning = false
+        for app in NSWorkspace.shared.runningApplications {
+            if app.bundleIdentifier == "com.mourke.scrib" {
+                alreadyRunning = true
+                break;
+            }
+        }
+
+        if !alreadyRunning {
+            var pathComponents = Bundle.main.bundleURL.pathComponents
+            pathComponents.removeLast(3)
+            pathComponents.append("MacOS")
+            pathComponents.append("Scrib")
+            
+            let _ = try? NSWorkspace.shared.launchApplication(at: URL(fileURLWithPath: pathComponents.joined(separator: "/")), configuration: [:])
+        }
+        
+        NSApp.terminate(nil)
+    }
+
+    func applicationWillTerminate(_ aNotification: Notification) {
+        // Insert code here to tear down your application
     }
 }
+

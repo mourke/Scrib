@@ -26,13 +26,33 @@
 import SwiftUI
 
 struct AlertView: View {
+    
+    let imageName: String
+    let text: String
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VisualEffectView(material: .toolTip, blendingMode: .behindWindow) {
+            VStack {
+                Image(imageName)
+                    .foregroundColor(.gray)
+                    .edgesIgnoringSafeArea(.all)
+                Spacer()
+                Text(text)
+                    .font(.system(size: 19))
+                    .fontWeight(.regular)
+                
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .padding(EdgeInsets(top: 28, leading: 0, bottom: 20, trailing: 0))
+        }
+        .cornerRadius(20)
     }
 }
 
+#if DEBUG
 struct AlertView_Previews: PreviewProvider {
     static var previews: some View {
-        AlertView()
+        AlertView(imageName: "Heart", text: "Favourited")
     }
 }
+#endif

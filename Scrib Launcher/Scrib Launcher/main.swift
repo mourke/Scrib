@@ -1,6 +1,6 @@
 //
-//  TagView.swift
-//  Scrib
+//  main.swift
+//  Scrib Launcher
 //
 //  Copyright © 2020 Mark Bourke.
 //
@@ -23,10 +23,10 @@
 //  THE SOFTWARE
 //
 
-import SwiftUI
+import Foundation
+import Cocoa
 
-struct TagView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+
+let delegate = AppDelegate()
+NSApplication.shared.delegate = delegate
+_ = NSApplicationMain(CommandLine.argc, CommandLine.unsafeArgv)

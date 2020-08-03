@@ -26,13 +26,61 @@
 import SwiftUI
 
 struct OnboardingView: View {
+    
+    @State private var username = ""
+    @State private var password = ""
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        ZStack {
+            Image("Onboarding Background")
+                .resizable()
+                .edgesIgnoringSafeArea(.all)
+                .aspectRatio(contentMode: .fill)
+            
+            VStack {
+                Image("Logo")
+                    .padding(.bottom, 30)
+                TextField("Username", text: $username)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .font(.callout) // set the inner Text Field Font
+                    .padding(10)
+                    .background(Color(.controlBackgroundColor))
+                    .cornerRadius(5)
+                    .padding([.horizontal, .top])
+                SecureField("Password", text: $password)
+                    .textFieldStyle(PlainTextFieldStyle())
+                    .font(.callout) // set the inner Text Field Font
+                    .padding(10)
+                    .background(Color(.controlBackgroundColor))
+                    .cornerRadius(5)
+                    .padding()
+                Button(action: {
+                    // TODO: Login
+                }, label: {
+                    Text("Login")
+                })
+                    .buttonStyle(LoginButtonStyle())
+            }
+        }
     }
 }
 
+struct LoginButtonStyle: ButtonStyle {
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .padding(.horizontal, 40)
+            .padding(.vertical, 10)
+            .font(.callout)
+            .foregroundColor(Color("AppColor"))
+            .background(configuration.isPressed ? Color(.controlBackgroundColor).opacity(0.8) : Color(.controlBackgroundColor))
+            .cornerRadius(5)
+    }
+}
+
+#if DEBUG
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
         OnboardingView()
     }
 }
+#endif
