@@ -43,6 +43,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
     
+    @objc dynamic var currentlyPlayingTrack: ScrobbleTrack?
+    
+    var onboardingPopover: NSPopover!
+    
     var statusItem: NSStatusItem!
     var menu: NSMenu!
     var currentScrobbleMenuItem: NSMenuItem!
@@ -51,14 +55,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var profileMenuItem: NSMenuItem!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        addStatusItem()
+        LastFMKit.Auth.shared().apiKey = "bc15dd6972bc0f7c952273b34d253a6a"
+        LastFMKit.Auth.shared().apiSecret = "d46ca773c61a3907c0b19c777c5bcf20"
+        
+        configureStatusItem()
+        
         DistributedNotificationCenter.default().addObserver(self, selector: #selector(nowPlayingChanged), name: NSNotification.Name(rawValue: "com.apple.Music.playerInfo"), object: nil)
         
         SMLoginItemSetEnabled("com.mourke.scrib-launcher" as CFString, true)
-        
-        if !Settings.manager.isSignedIn {
-            showOnboardingView()
-        }
     }
     
     @objc func nowPlayingChanged(_ aNotification: Notification) {
@@ -75,17 +79,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let positionInAlbum = trackInfo["Track Number"] as? Int
             let albumArtist = trackInfo["Album Artist"] as? String
             let totalDurationMilliseconds = trackInfo["Total Time"] as? Int
-            
             let duration = (totalDurationMilliseconds != nil) ? totalDurationMilliseconds!/1000 : nil
             
-            TrackProvider.updateNowPlaying(track: song,
-                                           by: artist,
-                                           on: album,
-                                           position: positionInAlbum as NSNumber?,
-                                           albumArtist: albumArtist,
-                                           duration: duration as NSNumber?,
-                                           mbid: nil,
-                                           callback: nil)
+//            ScrobbleTrack.init(name: song,
+//                               artistName: artist,
+//                               albumName: album,
+//                               albumArtist: albumArtist,
+//                               positionInAlbum: positionInAlbum ?? 0,
+//                               duration: duration,
+//                               timestamp: Date(),
+//                               chosenByUser: true)
+            
+            
+//            TrackProvider.updateNowPlaying(track: song,
+//                                           by: artist,
+//                                           on: album,
+//                                           position: positionInAlbum,
+//                                           albumArtist: albumArtist,
+//                                           duration: duration,
+//                                           mbid: nil,
+//                                           callback: nil)
+            
             currentScrobbleMenuItem.title = "\(artist) - \(song)"
             favouriteMenuItem.isEnabled = true
             tagMenuItem.isEnabled = true
@@ -94,16 +108,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             favouriteMenuItem.isEnabled = false
             tagMenuItem.isEnabled = false
         }
-    }
-    
-    @objc func showOnboardingView() {
-        let onboardingView = OnboardingView()
-        let window = NSWindow(contentRect: NSRect(origin: .zero, size: CGSize(width: 300, height: 400)),
-                              styleMask: [.titled, .fullSizeContentView, .closable],
-                                  backing: .buffered, defer: false)
-        window.contentView = NSHostingView(rootView: onboardingView)
-        window.center()
-        activeWindow = window
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

@@ -28,9 +28,9 @@ import SwiftUI
 import OSLog
 import LastFMKit
 
-extension AppDelegate {
+extension AppDelegate: NSMenuDelegate {
     
-    func addStatusItem() {
+    func configureStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         
         guard let button = statusItem.button else {
@@ -40,10 +40,18 @@ extension AppDelegate {
         }
         
         button.image = NSImage(named: "NSStatusItem_Logo")
+        button.action = #selector(statusItemButtonClicked(_:))
+        button.sendAction(on: [.leftMouseDown, .rightMouseUp])
+        
+        onboardingPopover = NSPopover()
+        onboardingPopover.contentSize = NSSize(width: 400, height: 300)
+        onboardingPopover.behavior = .transient
+        onboardingPopover.animates = false
+        onboardingPopover.contentViewController = NSHostingController(rootView: OnboardingView())
         
         menu = NSMenu()
         menu.autoenablesItems = false
-        statusItem.menu = menu
+        menu.delegate = self
         currentScrobbleMenuItem = menu.addItem(withTitle: "Nothing playing", action: nil, keyEquivalent: "")
         currentScrobbleMenuItem.isEnabled = false // never enable - it doesn't make sense for this to be clickable
         menu.addItem(.separator())
@@ -52,7 +60,7 @@ extension AppDelegate {
         tagMenuItem = menu.addItem(withTitle: "Tag...", action: #selector(displayTagWindow), keyEquivalent: "T")
         favouriteMenuItem.keyEquivalentModifierMask = [.command]
         tagMenuItem.keyEquivalentModifierMask = [.command]
-        //tagMenuItem.isEnabled = false // enable once a song plays
+        tagMenuItem.isEnabled = false // enable once a song plays
         favouriteMenuItem.isEnabled = false // enable once a song plays
         menu.addItem(.separator())
         
@@ -65,6 +73,27 @@ extension AppDelegate {
         menu.addItem(.separator())
         
         menu.addItem(withTitle: "Quit", action: #selector(quitApp), keyEquivalent: "")
+    }
+    
+    @objc func statusItemButtonClicked(_ button: NSButton) {
+         guard let event = NSApp.currentEvent else {
+            return
+        }
+        
+        if (Settings.manager.isSignedIn || event.type == .rightMouseUp) {
+            statusItem.menu = menu // add menu. there is no other way to present it natively
+            button.performClick(nil) // manually perform click. once the menu is dismissed, remove the menu from status item
+        } else {
+            if onboardingPopover.isShown {
+                onboardingPopover.performClose(button)
+            } else {
+                onboardingPopover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
+            }
+        }
+    }
+    
+    func menuDidClose(_ menu: NSMenu) {
+        statusItem.menu = nil // remove so action selector will be called
     }
     
     /// Called when the "Tag" status item is pressed.
