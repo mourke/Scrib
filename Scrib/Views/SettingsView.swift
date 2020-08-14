@@ -25,9 +25,14 @@
 
 import SwiftUI
 
-struct SettingsView: View {
+struct SettingsView: View, SettingsToolbarDelegate {
+    
     var body: some View {
         Text("Hello, World!")
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+    
+    func toolbarItemSelected(_ toolbar: SettingsToolbar, item: NSToolbarItem) {
+        print("item changed")
     }
 }

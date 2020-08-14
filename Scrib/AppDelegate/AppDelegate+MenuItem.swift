@@ -60,7 +60,7 @@ extension AppDelegate: NSMenuDelegate {
         tagMenuItem = menu.addItem(withTitle: "Tag...", action: #selector(displayTagWindow), keyEquivalent: "T")
         favouriteMenuItem.keyEquivalentModifierMask = [.command]
         tagMenuItem.keyEquivalentModifierMask = [.command]
-        tagMenuItem.isEnabled = false // enable once a song plays
+        //tagMenuItem.isEnabled = false // enable once a song plays
         favouriteMenuItem.isEnabled = false // enable once a song plays
         menu.addItem(.separator())
         
@@ -68,7 +68,7 @@ extension AppDelegate: NSMenuDelegate {
         profileMenuItem.isEnabled = false // enable once a user is authenticated
         menu.addItem(.separator())
         
-        let settingsMenuItem = menu.addItem(withTitle: "Settings", action: #selector(displaySettingsWindow), keyEquivalent: ",")
+        let settingsMenuItem = menu.addItem(withTitle: "Settings...", action: #selector(displaySettingsWindow), keyEquivalent: ",")
         settingsMenuItem.keyEquivalentModifierMask = [.command]
         menu.addItem(.separator())
         
@@ -98,18 +98,43 @@ extension AppDelegate: NSMenuDelegate {
     
     /// Called when the "Tag" status item is pressed.
     @objc func displayTagWindow() {
-        let settingsView = SettingsView()
-        let tagWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
-                                  styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
-                                  backing: .buffered, defer: false)
+        guard let track = musicApplication.currentTrack else { return }
+        
+        let tagWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 450, height: 250),
+                                 styleMask: [.titled, .fullSizeContentView],
+                                 backing: .buffered, defer: false)
+        let tagView = TagView(image: track.artworks?().first?.data,
+                              add: { [weak tagWindow, weak self, track] (type, tags) in
+            tagWindow?.close()
+            self?.hideIfNoWindows() // it's just the alert window that's been presented, return to previous app
+            
+            let artist = track.artist!
+            
+            switch type {
+            case .album:
+                AlbumProvider.add(tags: tags, to: track.album!, by: track.albumArtist ?? artist, callback: nil)
+            case .artist:
+                ArtistProvider.add(tags: tags, to: artist, callback: nil)
+            case .track:
+                TrackProvider.add(tags: tags, to: track.name!, by: artist, callback: nil)
+            default:
+                fatalError()
+            }
+        }, cancel: { [weak tagWindow, weak self] in
+            tagWindow?.close()
+            self?.hideIfNoWindows() // it's just the alert window that's been presented, return to previous app
+        })
         tagWindow.center()
         tagWindow.setFrameAutosaveName("Tag Window")
-        tagWindow.contentView = NSHostingView(rootView: settingsView)
-        activeWindow = tagWindow
+        tagWindow.contentView = NSHostingView(rootView: tagView)
+        
+        showWindow(tagWindow)
     }
     
     /// Called when the "Favourite" status item is pressed.
     @objc func favouriteSong() {
+        //TrackProvider.love(track: <#T##String#>, by: <#T##String#>, callback: <#T##LFMErrorCallback?##LFMErrorCallback?##(Error?) -> Void#>)
+        //TrackProvider.unlove(track: <#T##String#>, by: <#T##String#>, callback: <#T##LFMErrorCallback?##LFMErrorCallback?##(Error?) -> Void#>)
         // TODO: API call
         let alertView = AlertView(imageName: "Heart", text: "Favourited")
         
@@ -122,14 +147,16 @@ extension AppDelegate: NSMenuDelegate {
         alertWindow.backgroundColor = .clear
         alertWindow.hasShadow = false
         alertWindow.center()
-        self.activeWindow = alertWindow
+        
+        showWindow(alertWindow)
         
         DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5) {
-            NSAnimationContext.runAnimationGroup({ [weak self] (context) in
+            NSAnimationContext.runAnimationGroup({ [weak alertWindow] (context) in
                 context.duration = 0.8
-                self?.activeWindow?.animator().alphaValue = 0.0
-            }) { [weak self] in
-                self?.activeWindow = nil
+                alertWindow?.animator().alphaValue = 0.0
+            }) { [weak alertWindow, weak self] in
+                alertWindow?.close()
+                self?.hideIfNoWindows() // it's just the alert window that's been presented, return to previous app
             }
         }
     }
@@ -137,14 +164,19 @@ extension AppDelegate: NSMenuDelegate {
     /// Called when the "Settings" status item is pressed.
     @objc func displaySettingsWindow() {
         let settingsView = SettingsView()
-        let settingsWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 480, height: 300),
-                                  styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
+        let settingsWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 640, height: 330),
+                                  styleMask: [.titled, .closable, .fullSizeContentView],
                                   backing: .buffered, defer: false)
         settingsWindow.center()
         settingsWindow.setFrameAutosaveName("Settings Window")
+        settingsWindow.title = "Settings"
         settingsWindow.contentView = NSHostingView(rootView: settingsView)
         
-        activeWindow = settingsWindow
+        let toolbar = SettingsToolbar()
+        toolbar.navigationDelegate = settingsView
+        settingsWindow.toolbar = toolbar
+        
+        showWindow(settingsWindow)
     }
     
     /// Called when the "Go to Last.fm profile" status item is pressed.

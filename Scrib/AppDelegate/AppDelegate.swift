@@ -27,23 +27,9 @@ import Cocoa
 import SwiftUI
 import func ServiceManagement.SMLoginItemSetEnabled
 import LastFMKit
+import ScriptingBridge
 
 class AppDelegate: NSObject, NSApplicationDelegate {
-
-    var activeWindow: NSWindow? {
-        didSet {
-            if let window = activeWindow {
-                window.makeKeyAndOrderFront(nil)
-                NSApp.activate(ignoringOtherApps: true)
-            } else {
-                oldValue?.orderOut(nil)
-                NSApp.hide(nil)
-                NSApp.unhideWithoutActivation()
-            }
-        }
-    }
-    
-    @objc dynamic var currentlyPlayingTrack: ScrobbleTrack?
     
     var onboardingPopover: NSPopover!
     
@@ -53,65 +39,66 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var favouriteMenuItem: NSMenuItem!
     var tagMenuItem: NSMenuItem!
     var profileMenuItem: NSMenuItem!
+    
+    let musicApplication: MusicApplication = MusicApplicationObject()
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        LastFMKit.Auth.shared().apiKey = "bc15dd6972bc0f7c952273b34d253a6a"
-        LastFMKit.Auth.shared().apiSecret = "d46ca773c61a3907c0b19c777c5bcf20"
+        LastFMKit.Auth.shared.apiKey = "bc15dd6972bc0f7c952273b34d253a6a"
+        LastFMKit.Auth.shared.apiSecret = "d46ca773c61a3907c0b19c777c5bcf20"
         
         configureStatusItem()
+        nowPlayingChanged()
         
         DistributedNotificationCenter.default().addObserver(self, selector: #selector(nowPlayingChanged), name: NSNotification.Name(rawValue: "com.apple.Music.playerInfo"), object: nil)
         
         SMLoginItemSetEnabled("com.mourke.scrib-launcher" as CFString, true)
     }
     
-    @objc func nowPlayingChanged(_ aNotification: Notification) {
-        guard let trackInfo = aNotification.userInfo,
-            let song = trackInfo["Name"] as? String,
-            let artist = trackInfo["Artist"] as? String,
-            let playerState = trackInfo["Player State"] as? String
-        else {
-            return
-        }
-        
-        if playerState == "Playing" {
-            let album = trackInfo["Album"] as? String
-            let positionInAlbum = trackInfo["Track Number"] as? Int
-            let albumArtist = trackInfo["Album Artist"] as? String
-            let totalDurationMilliseconds = trackInfo["Total Time"] as? Int
-            let duration = (totalDurationMilliseconds != nil) ? totalDurationMilliseconds!/1000 : nil
-            
-//            ScrobbleTrack.init(name: song,
-//                               artistName: artist,
-//                               albumName: album,
-//                               albumArtist: albumArtist,
-//                               positionInAlbum: positionInAlbum ?? 0,
-//                               duration: duration,
-//                               timestamp: Date(),
-//                               chosenByUser: true)
-            
+    @objc func nowPlayingChanged() {
+        let isPlaying = musicApplication.playerState == .playing
+
+        if isPlaying {
+            let currentTrack = musicApplication.currentTrack!
+            let song = currentTrack.name!
+            let artist = currentTrack.artist!
             
 //            TrackProvider.updateNowPlaying(track: song,
 //                                           by: artist,
-//                                           on: album,
-//                                           position: positionInAlbum,
-//                                           albumArtist: albumArtist,
-//                                           duration: duration,
+//                                           on: currentTrack.album,
+//                                           position: currentTrack.trackNumber,
+//                                           albumArtist: currentTrack.albumArtist,
+//                                           duration: currentTrack.duration,
 //                                           mbid: nil,
 //                                           callback: nil)
+            var title = "\(song)\n\(artist)"
             
-            currentScrobbleMenuItem.title = "\(artist) - \(song)"
-            favouriteMenuItem.isEnabled = true
-            tagMenuItem.isEnabled = true
+            if let album = currentTrack.album {
+                title += " - \(album)"
+            }
+            
+            currentScrobbleMenuItem.attributedTitle = NSAttributedString(string: title)
         } else {
             currentScrobbleMenuItem.title = "Nothing playing"
-            favouriteMenuItem.isEnabled = false
-            tagMenuItem.isEnabled = false
         }
+
+        favouriteMenuItem.isEnabled = isPlaying ? true : false
+        tagMenuItem.isEnabled = isPlaying ? true : false
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {
         // Insert code here to tear down your application
+    }
+    
+    func showWindow(_ window: NSWindow) {
+        window.makeKeyAndOrderFront(nil)
+        NSApp.activate(ignoringOtherApps: true) // activate if not done already
+    }
+    
+    func hideIfNoWindows() {
+        if NSApp.windows.count == 0 {
+            NSApp.hide(nil)
+            NSApp.unhideWithoutActivation()
+        }
     }
 }
 

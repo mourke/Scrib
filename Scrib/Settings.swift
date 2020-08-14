@@ -77,7 +77,12 @@ class Settings: NSObject {
         super.init()
     }
     
-    func changeValue<Value>(_ key: ReferenceWritableKeyPath<Settings, Value>, to newValue: Value) {
+    func changeValue<Value>(_ key: KeyPath<Settings, Value>, to newValue: Value) {
+        guard let key = key as? ReferenceWritableKeyPath else {
+            os_log("Could not write to read-only keypath")
+            return
+        }
+        
         writeWorkItem.cancel()
         
         self[keyPath: key] = newValue

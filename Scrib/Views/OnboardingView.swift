@@ -24,6 +24,7 @@
 //
 
 import SwiftUI
+import LastFMKit
 
 struct OnboardingView: View {
     
@@ -55,7 +56,24 @@ struct OnboardingView: View {
                     .cornerRadius(5)
                     .padding()
                 Button(action: {
-                    // TODO: Login
+                    Auth.shared.getSession(username: self.username, password: self.password) { (result) in
+                        switch result {
+                        case .failure(let error):
+                            // TODO: Error handling
+                            break
+                        case .success(let session):
+                            UserProvider.getInfo(on: session.username) { (result) in
+                                switch result {
+                                case .failure(let error):
+                                    // TODO: Error handling
+                                    break
+                                case .success(let user):
+                                    Settings.manager.changeValue(\.user, to: user)
+                                    break
+                                }
+                            }
+                        }
+                    }
                 }, label: {
                     Text("Login")
                 })

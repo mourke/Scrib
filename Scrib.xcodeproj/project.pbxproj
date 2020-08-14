@@ -20,6 +20,8 @@
 		4D3FF31B24D428A800B19651 /* AlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FF31A24D428A700B19651 /* AlertView.swift */; };
 		4D3FF31D24D42B3100B19651 /* AppDelegate+MenuItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FF31C24D42B3100B19651 /* AppDelegate+MenuItem.swift */; };
 		4D3FF31F24D42E8900B19651 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3FF31E24D42E8800B19651 /* main.swift */; };
+		4DCA59F224E5E54F006F16C7 /* SettingsToolbar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCA59F124E5E54F006F16C7 /* SettingsToolbar.swift */; };
+		4DCA59FC24E70635006F16C7 /* Music.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DCA59FB24E70634006F16C7 /* Music.swift */; };
 		615F0FA6FF81EA8F4693CC23 /* Pods_Scrib.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F5722651C4EFDB70774E079 /* Pods_Scrib.framework */; };
 /* End PBXBuildFile section */
 
@@ -64,6 +66,10 @@
 		4D3FF31A24D428A700B19651 /* AlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertView.swift; sourceTree = "<group>"; };
 		4D3FF31C24D42B3100B19651 /* AppDelegate+MenuItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+MenuItem.swift"; sourceTree = "<group>"; };
 		4D3FF31E24D42E8800B19651 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		4DCA59F124E5E54F006F16C7 /* SettingsToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsToolbar.swift; sourceTree = "<group>"; };
+		4DCA59F624E702E3006F16C7 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+		4DCA59F824E70321006F16C7 /* ScriptingBridge.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ScriptingBridge.framework; path = System/Library/Frameworks/ScriptingBridge.framework; sourceTree = SDKROOT; };
+		4DCA59FB24E70634006F16C7 /* Music.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Music.swift; sourceTree = "<group>"; };
 		5F5722651C4EFDB70774E079 /* Pods_Scrib.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Scrib.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		941501D9EEA8539269562114 /* Pods-Scrib.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Scrib.debug.xcconfig"; path = "Target Support Files/Pods-Scrib/Pods-Scrib.debug.xcconfig"; sourceTree = "<group>"; };
 		EB79A4AE5D1067A5EE0C3E38 /* Pods-Scrib.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Scrib.release.xcconfig"; path = "Target Support Files/Pods-Scrib/Pods-Scrib.release.xcconfig"; sourceTree = "<group>"; };
@@ -94,6 +100,7 @@
 			isa = PBXGroup;
 			children = (
 				4D3FF30724D35F3400B19651 /* Assets.xcassets */,
+				4DCA59FB24E70634006F16C7 /* Music.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -161,6 +168,7 @@
 			isa = PBXGroup;
 			children = (
 				4D3FF30524D35F3000B19651 /* SettingsView.swift */,
+				4DCA59F124E5E54F006F16C7 /* SettingsToolbar.swift */,
 				4D3FF31624D427BD00B19651 /* OnboardingView.swift */,
 				4D3FF31824D4283900B19651 /* TagView.swift */,
 				4D3FF31A24D428A700B19651 /* AlertView.swift */,
@@ -181,6 +189,8 @@
 		D4CA3EE8E3D48FAA21D7F403 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				4DCA59F824E70321006F16C7 /* ScriptingBridge.framework */,
+				4DCA59F624E702E3006F16C7 /* AppKit.framework */,
 				5F5722651C4EFDB70774E079 /* Pods_Scrib.framework */,
 			);
 			name = Frameworks;
@@ -327,8 +337,10 @@
 				4D3EA2F624D58667008C7495 /* VisualEffectView.swift in Sources */,
 				4D3EA31824D6CE34008C7495 /* Settings.swift in Sources */,
 				4D3EA34A24D85F68008C7495 /* NSTextField+FocusRing.swift in Sources */,
+				4DCA59F224E5E54F006F16C7 /* SettingsToolbar.swift in Sources */,
 				4D3FF31F24D42E8900B19651 /* main.swift in Sources */,
 				4D3FF31924D4283900B19651 /* TagView.swift in Sources */,
+				4DCA59FC24E70635006F16C7 /* Music.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

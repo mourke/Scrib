@@ -24,9 +24,79 @@
 //
 
 import SwiftUI
+import LastFMKit.LFMTaggingType
 
 struct TagView: View {
+    
+    @State var type: TaggingType = .track
+    @State var tags = ""
+    
+    private let add: (TaggingType, [Tag]) -> Void
+    private let cancel: () -> Void
+    private let image: NSImage?
+    
+    init(image: NSImage? = nil,
+         add: @escaping (TaggingType, [Tag]) -> Void,
+         cancel: @escaping () -> Void) {
+        self.add = add
+        self.cancel = cancel
+        self.image = image
+    }
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack(alignment: .leading, spacing: 15) {
+            HStack(alignment: .center, spacing: 10) {
+                Image(nsImage: image ?? NSImage(named: "Placeholder_Track")!)
+                    .resizable()
+                    .frame(width: 80, height: 80)
+                    .scaledToFit()
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Add tags to item.")
+                        .fontWeight(.bold)
+                    Text("Enter tags separated by a comma.")
+                        .font(.caption)
+                }
+            }
+            HStack {
+                Spacer(minLength: 35)
+                Text("Tags:")
+                TextField("Enter tags separated by a \",\"", text: $tags)
+            }
+            
+            Picker(selection: $type, label: Text("Type:")) {
+                Text("Track").tag(TaggingType.track)
+                Text("Artist").tag(TaggingType.artist)
+                Text("Album").tag(TaggingType.album)
+            }
+            .pickerStyle(RadioGroupPickerStyle())
+            .padding(.leading, 35)
+            
+            HStack {
+                Spacer()
+                
+                Button(action: cancel) {
+                    Text("Cancel")
+                }
+                Button(action: {
+                    self.add(self.type, self.tags.components(separatedBy: ", ").map({Tag(name: $0)}))
+                }) {
+                    Text("Add")
+                }
+            }
+        }
+        .padding()
     }
 }
+
+#if DEBUG
+struct TagView_Previews: PreviewProvider {
+    static var previews: some View {
+        TagView(add: { (_, _) in
+            
+        }, cancel: {
+            
+        })
+    }
+}
+#endif
