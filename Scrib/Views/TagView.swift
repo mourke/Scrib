@@ -69,8 +69,8 @@ struct TagView: View {
                 Text("Artist").tag(TaggingType.artist)
                 Text("Album").tag(TaggingType.album)
             }
-            .pickerStyle(RadioGroupPickerStyle())
-            .padding(.leading, 35)
+                .pickerStyle(RadioGroupPickerStyle())
+                .padding(.leading, 35)
             
             HStack {
                 Spacer()

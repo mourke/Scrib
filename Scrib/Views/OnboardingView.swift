@@ -58,22 +58,22 @@ struct OnboardingView: View {
                 Button(action: {
                     Auth.shared.getSession(username: self.username, password: self.password) { (result) in
                         switch result {
-                        case .failure(let error):
+                        case .failure(let error as LFMError):
                             // TODO: Error handling
                             break
                         case .success(let session):
                             UserProvider.getInfo(on: session.username) { (result) in
                                 switch result {
-                                case .failure(let error):
+                                case .failure(let error as LFMError):
                                     // TODO: Error handling
                                     break
                                 case .success(let user):
                                     Settings.manager.changeValue(\.user, to: user)
                                     break
                                 }
-                            }
+                            }.resume()
                         }
-                    }
+                    }.resume()
                 }, label: {
                     Text("Login")
                 })

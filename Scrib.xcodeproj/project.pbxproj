@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D20C56F24FAA9F500EF0711 /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D20C56E24FAA9F500EF0711 /* Updater.swift */; };
 		4D3EA2F624D58667008C7495 /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3EA2F524D58667008C7495 /* VisualEffectView.swift */; };
 		4D3EA31824D6CE34008C7495 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3EA31724D6CE34008C7495 /* Settings.swift */; };
 		4D3EA34124D6D49C008C7495 /* Scrib Launcher.app in Copy Launcher */ = {isa = PBXBuildFile; fileRef = 4D3EA33D24D6D315008C7495 /* Scrib Launcher.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -50,6 +51,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4D20C56E24FAA9F500EF0711 /* Updater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Updater.swift; sourceTree = "<group>"; };
 		4D3EA2F524D58667008C7495 /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 		4D3EA31724D6CE34008C7495 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		4D3EA33824D6D314008C7495 /* Scrib Launcher.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = "Scrib Launcher.xcodeproj"; path = "Scrib Launcher/Scrib Launcher.xcodeproj"; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 				4D3FF30924D35F3400B19651 /* Preview Content */,
 				4D3FF31E24D42E8800B19651 /* main.swift */,
 				4D3EA31724D6CE34008C7495 /* Settings.swift */,
+				4D20C56E24FAA9F500EF0711 /* Updater.swift */,
 			);
 			path = Scrib;
 			sourceTree = "<group>";
@@ -333,6 +336,7 @@
 				4D3FF31B24D428A800B19651 /* AlertView.swift in Sources */,
 				4D3FF31724D427BD00B19651 /* OnboardingView.swift in Sources */,
 				4D3FF30624D35F3000B19651 /* SettingsView.swift in Sources */,
+				4D20C56F24FAA9F500EF0711 /* Updater.swift in Sources */,
 				4D3FF30424D35F3000B19651 /* AppDelegate.swift in Sources */,
 				4D3EA2F624D58667008C7495 /* VisualEffectView.swift in Sources */,
 				4D3EA31824D6CE34008C7495 /* Settings.swift in Sources */,
@@ -468,6 +472,7 @@
 				CODE_SIGN_ENTITLEMENTS = Scrib/Scrib.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Scrib/Preview Content\"";
 				DEVELOPMENT_TEAM = BQBJ6NTPEG;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -478,6 +483,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mourke.scrib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -492,6 +498,7 @@
 				CODE_SIGN_ENTITLEMENTS = Scrib/Scrib.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 2;
 				DEVELOPMENT_ASSET_PATHS = "\"Scrib/Preview Content\"";
 				DEVELOPMENT_TEAM = BQBJ6NTPEG;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -502,6 +509,7 @@
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MARKETING_VERSION = 1.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.mourke.scrib;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

@@ -26,50 +26,77 @@
 import Foundation
 import LastFMKit.LFMUser
 import OSLog
+import Cocoa
 
-class Settings: NSObject {
+class Settings: NSObject, ObservableObject {
     
     static let manager = Settings()
     
+    private static let infoDictionary = Bundle.main.infoDictionary!
+    
+    let appVersion = infoDictionary["CFBundleShortVersionString"] as! String
+    let appBuildNumber = infoDictionary["CFBundleVersion"] as! String
+    let appName = infoDictionary["CFBundleExecutable"] as! String
+    let appImage: NSImage = NSApp.applicationIconImage
+    let appCopyright = infoDictionary["NSHumanReadableCopyright"] as! String
+
+    
     /** `true` if application should automatically start when the computer starts. */
-    @objc dynamic private(set) var startOnLogin: Bool
+    @objc dynamic private(set) var startOnLogin: Bool {
+        willSet {
+            objectWillChange.send()
+        }
+    }
     
     /** `true` if application should scrobble now playing tracks to Last.fm */
-    @objc dynamic private(set) var scrobbling: Bool
-    
-    /** `true` if application should automatically check for updates. */
-    @objc dynamic private(set) var automaticUpdates: Bool
+    @objc dynamic private(set) var scrobbling: Bool {
+        willSet {
+            objectWillChange.send()
+        }
+    }
     
     /** The percentage of the song that has to play before a scrobble is registered. */
-    @objc dynamic private(set) var scrobblePercentage: Int
-    
-    /** Because there is no way to tell when a song actually ends, set this to `true` if you want the song to be scrobbled when the time period has elapsed and a `Pause` or `Skip` notification have not been recieved. */
-    @objc dynamic private(set) var scrobbleAfterSongDurationExpires: Bool
+    @objc dynamic private(set) var scrobblePercentage: Int {
+        willSet {
+            objectWillChange.send()
+        }
+    }
     
     /** `true` will send notifications every time a song is played to show the scrobbling feature is working. */
-    @objc dynamic private(set) var enableNotifications: Bool
+    @objc dynamic private(set) var enableNotifications: Bool {
+        willSet {
+            objectWillChange.send()
+        }
+    }
     
     /** The currently signed in user. */
-    @objc dynamic private(set) var user: User?
+    @objc dynamic private(set) var user: User? {
+        willSet {
+            objectWillChange.send()
+        }
+    }
     
     var isSignedIn: Bool {
         return user != nil
     }
     
-    private lazy var writeWorkItem = DispatchWorkItem { [weak self] in
-        self?.writeToDisk()
-    }
+    private var writeWorkItem: DispatchWorkItem?
     
     override init() {
         startOnLogin = UserDefaults.standard.bool(forKey: #keyPath(Settings.startOnLogin))
         scrobbling = UserDefaults.standard.bool(forKey: #keyPath(Settings.scrobbling))
-        automaticUpdates = UserDefaults.standard.bool(forKey: #keyPath(Settings.automaticUpdates))
         scrobblePercentage = UserDefaults.standard.integer(forKey: #keyPath(Settings.scrobblePercentage))
-        scrobbleAfterSongDurationExpires = UserDefaults.standard.bool(forKey: #keyPath(Settings.scrobbleAfterSongDurationExpires))
         enableNotifications = UserDefaults.standard.bool(forKey: #keyPath(Settings.enableNotifications))
-        if let userData = UserDefaults.standard.data(forKey: #keyPath(Settings.user)),
-            let user = try? NSKeyedUnarchiver.unarchivedObject(ofClass: User.self, from: userData) {
-            self.user = user
+        
+        
+        if let userData = UserDefaults.standard.data(forKey: #keyPath(Settings.user)) {
+            do {
+                let user = try NSKeyedUnarchiver.unarchiveTopLevelObjectWithData(userData) as? User
+                self.user = user
+            } catch {
+                os_log(.error, "Failed to unarchive user information: %s", error.localizedDescription)
+                self.user = nil
+            }
         } else {
             user = nil
         }
@@ -83,17 +110,19 @@ class Settings: NSObject {
             return
         }
         
-        writeWorkItem.cancel()
+        writeWorkItem?.cancel()
+        writeWorkItem = DispatchWorkItem { [weak self] in
+            self?.writeToDisk()
+        }
         
         self[keyPath: key] = newValue
         
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.25, execute: writeWorkItem)
+        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 0.25, execute: writeWorkItem!)
     }
     
     private func writeToDisk() {
         UserDefaults.standard.set(startOnLogin, forKey: #keyPath(Settings.startOnLogin))
         UserDefaults.standard.set(scrobbling, forKey: #keyPath(Settings.scrobbling))
-        UserDefaults.standard.set(automaticUpdates, forKey: #keyPath(Settings.automaticUpdates))
         UserDefaults.standard.set(scrobblePercentage, forKey: #keyPath(Settings.scrobblePercentage))
         UserDefaults.standard.set(enableNotifications, forKey: #keyPath(Settings.enableNotifications))
         

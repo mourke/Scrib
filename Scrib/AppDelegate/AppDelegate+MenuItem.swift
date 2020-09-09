@@ -60,7 +60,7 @@ extension AppDelegate: NSMenuDelegate {
         tagMenuItem = menu.addItem(withTitle: "Tag...", action: #selector(displayTagWindow), keyEquivalent: "T")
         favouriteMenuItem.keyEquivalentModifierMask = [.command]
         tagMenuItem.keyEquivalentModifierMask = [.command]
-        //tagMenuItem.isEnabled = false // enable once a song plays
+        tagMenuItem.isEnabled = false // enable once a song plays
         favouriteMenuItem.isEnabled = false // enable once a song plays
         menu.addItem(.separator())
         
@@ -163,17 +163,16 @@ extension AppDelegate: NSMenuDelegate {
     
     /// Called when the "Settings" status item is pressed.
     @objc func displaySettingsWindow() {
-        let settingsView = SettingsView()
-        let settingsWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 640, height: 330),
+        let toolbar = SettingsToolbar()
+        let settingsView = SettingsView(toolbar: toolbar)
+        
+        let settingsWindow = NSWindow(contentRect: .zero,
                                   styleMask: [.titled, .closable, .fullSizeContentView],
                                   backing: .buffered, defer: false)
         settingsWindow.center()
         settingsWindow.setFrameAutosaveName("Settings Window")
         settingsWindow.title = "Settings"
         settingsWindow.contentView = NSHostingView(rootView: settingsView)
-        
-        let toolbar = SettingsToolbar()
-        toolbar.navigationDelegate = settingsView
         settingsWindow.toolbar = toolbar
         
         showWindow(settingsWindow)

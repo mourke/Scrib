@@ -23,6 +23,12 @@
 //  THE SOFTWARE
 //
 
+/* ************************************************************************** *
+ *  Update this file by running:                                              *
+ *         `sdef /System/Applications/Music.app | sdp -fh --basename "Music"` *
+ *  and then looking at the automatic Xcode Objective-C to Swift generation.  *
+ * ************************************************************************** */
+
 import AppKit
 import ScriptingBridge
 

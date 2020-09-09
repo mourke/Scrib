@@ -41,8 +41,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var profileMenuItem: NSMenuItem!
     
     let musicApplication: MusicApplication = MusicApplicationObject()
+    var isTrackLoved: Bool? = false
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
+        let _ = Updater.shared // initialise library
+    
         LastFMKit.Auth.shared.apiKey = "bc15dd6972bc0f7c952273b34d253a6a"
         LastFMKit.Auth.shared.apiSecret = "d46ca773c61a3907c0b19c777c5bcf20"
         
@@ -62,14 +65,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let song = currentTrack.name!
             let artist = currentTrack.artist!
             
-//            TrackProvider.updateNowPlaying(track: song,
-//                                           by: artist,
-//                                           on: currentTrack.album,
-//                                           position: currentTrack.trackNumber,
-//                                           albumArtist: currentTrack.albumArtist,
-//                                           duration: currentTrack.duration,
-//                                           mbid: nil,
-//                                           callback: nil)
+            TrackProvider.updateNowPlaying(track: song,
+                                           by: artist,
+                                           on: currentTrack.album,
+                                           position: currentTrack.trackNumber,
+                                           albumArtist: currentTrack.albumArtist,
+                                           duration: currentTrack.duration).resume()
             var title = "\(song)\n\(artist)"
             
             if let album = currentTrack.album {

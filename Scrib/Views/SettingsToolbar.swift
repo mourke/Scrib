@@ -25,23 +25,27 @@
 
 import Cocoa
 
-protocol SettingsToolbarDelegate {
-    func toolbarItemSelected(_ toolbar: SettingsToolbar, item: NSToolbarItem)
-}
-
-class SettingsToolbar : NSToolbar, NSToolbarDelegate {
+class SettingsToolbar: NSToolbar, ObservableObject, NSToolbarDelegate {
     
     static let generalItemIdentifier = NSToolbarItem.Identifier(rawValue: "General")
-    static let scrobblingItemIdentifier = NSToolbarItem.Identifier(rawValue: "Scrobbling")
     static let accountItemIdentifier = NSToolbarItem.Identifier(rawValue: "Account")
+    static let aboutItemIdentifier = NSToolbarItem.Identifier(rawValue: "About")
     
-    var navigationDelegate: SettingsToolbarDelegate?
+    override var selectedItemIdentifier: NSToolbarItem.Identifier? {
+        get {
+            return super.selectedItemIdentifier
+        } set {
+            objectWillChange.send()
+            super.selectedItemIdentifier = newValue
+        }
+    }
     
     private static let itemIdentifiers = [SettingsToolbar.generalItemIdentifier,
-                                          SettingsToolbar.scrobblingItemIdentifier,
-                                          SettingsToolbar.accountItemIdentifier]
+                                          SettingsToolbar.accountItemIdentifier,
+                                          SettingsToolbar.aboutItemIdentifier]
     
-    private static let identifier: NSToolbar.Identifier  = "Settings Toolbar"
+    
+    private static let identifier: NSToolbar.Identifier = "Settings Toolbar"
     
     init() {
         super.init(identifier: SettingsToolbar.identifier)
@@ -62,12 +66,12 @@ class SettingsToolbar : NSToolbar, NSToolbarDelegate {
         case SettingsToolbar.generalItemIdentifier:
             item.label = "General"
             item.image = NSImage(named: NSImage.preferencesGeneralName)
-        case SettingsToolbar.scrobblingItemIdentifier:
-            item.label = "Scrobbling"
-            item.image = NSImage(named: "NSToolbar_Scrobbling")
         case SettingsToolbar.accountItemIdentifier:
             item.label = "Account"
             item.image = NSImage(named: NSImage.userAccountsName)
+        case SettingsToolbar.aboutItemIdentifier:
+            item.label = "About"
+            item.image = NSImage(named: NSImage.infoName)
         default:
             fatalError()
         }
@@ -87,8 +91,5 @@ class SettingsToolbar : NSToolbar, NSToolbarDelegate {
         return toolbarDefaultItemIdentifiers(toolbar)
     }
     
-    @objc private func itemSelected(_ item: NSToolbarItem) {
-        navigationDelegate?.toolbarItemSelected(self, item: item)
-    }
-    
+    @objc private func itemSelected(_ item: NSToolbarItem) {} // we need an action to enable the toolbar button. the change logic will be handled by the `selectedItemIdentifier` property of `NSToolbar`
 }
