@@ -32,6 +32,16 @@
 import AppKit
 import ScriptingBridge
 
+extension NSNotification.Name {
+    
+    /**
+     Posted by Music when now playing song changes. **Not** posted when player state changes, e.g. Pause.
+     
+     The notification object is Music. The notification userInfo dictionary contains info about the currently playing song.
+     */
+    static let MusicPlayerInfo = NSNotification.Name(rawValue: "com.apple.Music.playerInfo")
+}
+
 @objc enum MusicEKnd: UInt32 {
     case TrackListing = 1800696427 /* a basic listing of tracks within a playlist */
     case AlbumListing = 1799449698 /* a listing of a playlist grouped by album */

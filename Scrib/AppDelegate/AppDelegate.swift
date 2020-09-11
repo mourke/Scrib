@@ -33,6 +33,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     var onboardingPopover: NSPopover!
     
+    var settingsWindow: NSWindow?
+    var tagWindow: NSWindow?
+    var favouriteWindow: NSWindow?
+    
     var statusItem: NSStatusItem!
     var menu: NSMenu!
     var currentScrobbleMenuItem: NSMenuItem!
@@ -41,7 +45,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var profileMenuItem: NSMenuItem!
     
     let musicApplication: MusicApplication = MusicApplicationObject()
-    var isTrackLoved: Bool? = false
+    var isCurrentTrackLoved: Bool? = nil {
+        didSet {
+            guard oldValue != isCurrentTrackLoved else { return }
+            
+            let currentTrackLoved = isCurrentTrackLoved ?? false
+            favouriteMenuItem.title = currentTrackLoved ? "Unfavourite" : "Favourite"
+        }
+    }
+    
+    var signedInObservation: NSKeyValueObservation!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         let _ = Updater.shared // initialise library
@@ -50,15 +63,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         LastFMKit.Auth.shared.apiSecret = "d46ca773c61a3907c0b19c777c5bcf20"
         
         configureStatusItem()
-        nowPlayingChanged()
+        nowPlayingChanged() // update initial status
         
-        DistributedNotificationCenter.default().addObserver(self, selector: #selector(nowPlayingChanged), name: NSNotification.Name(rawValue: "com.apple.Music.playerInfo"), object: nil)
+        signedInObservation = Settings.manager.observe(\.user, options: [.new, .initial]) { [weak self] (settings, change) in
+            
+            self?.profileMenuItem.isEnabled = settings.isSignedIn
+            self?.updateActionMenuItemsEnabled()
+        }
+        
+        DistributedNotificationCenter.default().addObserver(self, selector: #selector(nowPlayingChanged), name: .MusicPlayerInfo, object: nil)
         
         SMLoginItemSetEnabled("com.mourke.scrib-launcher" as CFString, true)
     }
     
     @objc func nowPlayingChanged() {
         let isPlaying = musicApplication.playerState == .playing
+        
+        
+        #warning("This method isn't called when the player is paused i don't think")
 
         if isPlaying {
             let currentTrack = musicApplication.currentTrack!
@@ -71,6 +93,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                            position: currentTrack.trackNumber,
                                            albumArtist: currentTrack.albumArtist,
                                            duration: currentTrack.duration).resume()
+            isCurrentTrackLoved = false
             var title = "\(song)\n\(artist)"
             
             if let album = currentTrack.album {
@@ -79,9 +102,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             currentScrobbleMenuItem.attributedTitle = NSAttributedString(string: title)
         } else {
+            isCurrentTrackLoved = nil
             currentScrobbleMenuItem.title = "Nothing playing"
         }
 
+        updateActionMenuItemsEnabled()
+    }
+    
+    func updateActionMenuItemsEnabled() {
+        guard Settings.manager.isSignedIn else {
+            favouriteMenuItem.isEnabled = false
+            tagMenuItem.isEnabled = false
+            return
+        }
+        
+        let isPlaying = musicApplication.playerState == .playing
+        
         favouriteMenuItem.isEnabled = isPlaying ? true : false
         tagMenuItem.isEnabled = isPlaying ? true : false
     }

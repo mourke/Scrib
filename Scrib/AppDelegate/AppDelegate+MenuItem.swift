@@ -56,16 +56,13 @@ extension AppDelegate: NSMenuDelegate {
         currentScrobbleMenuItem.isEnabled = false // never enable - it doesn't make sense for this to be clickable
         menu.addItem(.separator())
         
-        favouriteMenuItem = menu.addItem(withTitle: "Favourite", action: #selector(favouriteSong), keyEquivalent: "L")
-        tagMenuItem = menu.addItem(withTitle: "Tag...", action: #selector(displayTagWindow), keyEquivalent: "T")
+        favouriteMenuItem = menu.addItem(withTitle: "Favourite", action: #selector(favouriteSong), keyEquivalent: "f")
+        tagMenuItem = menu.addItem(withTitle: "Tag...", action: #selector(displayTagWindow), keyEquivalent: "t")
         favouriteMenuItem.keyEquivalentModifierMask = [.command]
         tagMenuItem.keyEquivalentModifierMask = [.command]
-        tagMenuItem.isEnabled = false // enable once a song plays
-        favouriteMenuItem.isEnabled = false // enable once a song plays
         menu.addItem(.separator())
         
         profileMenuItem = menu.addItem(withTitle: "Go to Last.fm profile", action: #selector(openProfileUrl), keyEquivalent: "")
-        profileMenuItem.isEnabled = false // enable once a user is authenticated
         menu.addItem(.separator())
         
         let settingsMenuItem = menu.addItem(withTitle: "Settings...", action: #selector(displaySettingsWindow), keyEquivalent: ",")
@@ -98,14 +95,19 @@ extension AppDelegate: NSMenuDelegate {
     
     /// Called when the "Tag" status item is pressed.
     @objc func displayTagWindow() {
-        guard let track = musicApplication.currentTrack else { return }
+        if let tagWindow = tagWindow {
+            showWindow(tagWindow)
+            return
+        }
+        
+        let track = musicApplication.currentTrack!
         
         let tagWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 450, height: 250),
                                  styleMask: [.titled, .fullSizeContentView],
                                  backing: .buffered, defer: false)
         let tagView = TagView(image: track.artworks?().first?.data,
-                              add: { [weak tagWindow, weak self, track] (type, tags) in
-            tagWindow?.close()
+                              add: { [weak self, track] (type, tags) in
+            self?.tagWindow?.close()
             self?.hideIfNoWindows() // it's just the alert window that's been presented, return to previous app
             
             let artist = track.artist!
@@ -120,49 +122,85 @@ extension AppDelegate: NSMenuDelegate {
             default:
                 fatalError()
             }
-        }, cancel: { [weak tagWindow, weak self] in
-            tagWindow?.close()
+        }, cancel: { [weak self] in
+            self?.tagWindow?.close()
             self?.hideIfNoWindows() // it's just the alert window that's been presented, return to previous app
         })
         tagWindow.center()
         tagWindow.setFrameAutosaveName("Tag Window")
         tagWindow.contentView = NSHostingView(rootView: tagView)
         
+        self.tagWindow = tagWindow
         showWindow(tagWindow)
     }
     
     /// Called when the "Favourite" status item is pressed.
     @objc func favouriteSong() {
-        //TrackProvider.love(track: <#T##String#>, by: <#T##String#>, callback: <#T##LFMErrorCallback?##LFMErrorCallback?##(Error?) -> Void#>)
-        //TrackProvider.unlove(track: <#T##String#>, by: <#T##String#>, callback: <#T##LFMErrorCallback?##LFMErrorCallback?##(Error?) -> Void#>)
-        // TODO: API call
-        let alertView = AlertView(imageName: "Heart", text: "Favourited")
+        favouriteMenuItem.isEnabled = false // stop multiple pressing while loading
         
-        let alertWindow = NSWindow(contentRect: NSRect(origin: .zero, size: CGSize(width: 200, height: 200)),
-                                  styleMask: [.fullSizeContentView],
-                                  backing: .buffered, defer: false)
-        alertWindow.collectionBehavior = .transient
-        alertWindow.contentView = NSHostingView(rootView: alertView)
-        alertWindow.isOpaque = false
-        alertWindow.backgroundColor = .clear
-        alertWindow.hasShadow = false
-        alertWindow.center()
+        let loved = isCurrentTrackLoved! // this should never be called when this is nil. if it is there's an error
+        let track = musicApplication.currentTrack!.name!
+        let artist = musicApplication.currentTrack!.artist!
+        let id = musicApplication.currentTrack!.id!()
         
-        showWindow(alertWindow)
-        
-        DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5) {
-            NSAnimationContext.runAnimationGroup({ [weak alertWindow] (context) in
-                context.duration = 0.8
-                alertWindow?.animator().alphaValue = 0.0
-            }) { [weak alertWindow, weak self] in
-                alertWindow?.close()
-                self?.hideIfNoWindows() // it's just the alert window that's been presented, return to previous app
+        let callback: LFMErrorCallback = { [weak self] (error) in
+            guard let self = self else { return }
+            let isSameSongPlaying = self.musicApplication.currentTrack?.id?() == id // in case the song has changed in the time we've been calling the api
+            
+            if isSameSongPlaying {
+                self.favouriteMenuItem.isEnabled = true // only put this back if it's the same song. if it's not the same song then changing this could be incorrect
             }
+            
+            guard error == nil else { return }
+            
+            if isSameSongPlaying {
+                self.isCurrentTrackLoved?.toggle()
+            }
+            
+            guard self.favouriteWindow == nil else { // don't present if already showing. this could happen if there is a really slow internet connection the song is changed multiple times and multiple favourite operations are running on the api and then all return at once
+                return
+            }
+            
+            let alertView = AlertView(imageName: "Heart", text: loved ? "Unfavourited" : "Favourited") // TODO: change image using sf symbols
+            
+            let alertWindow = NSWindow(contentRect: NSRect(origin: .zero, size: CGSize(width: 200, height: 200)),
+                                      styleMask: [.fullSizeContentView],
+                                      backing: .buffered, defer: false)
+            alertWindow.collectionBehavior = .transient
+            alertWindow.contentView = NSHostingView(rootView: alertView)
+            alertWindow.isOpaque = false
+            alertWindow.backgroundColor = .clear
+            alertWindow.hasShadow = false
+            alertWindow.center()
+            
+            self.favouriteWindow = alertWindow
+            self.showWindow(alertWindow)
+            
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5) {
+                NSAnimationContext.runAnimationGroup({ [weak self] (context) in
+                    context.duration = 0.8
+                    self?.favouriteWindow?.animator().alphaValue = 0.0
+                }) { [weak self] in
+                    self?.favouriteWindow?.close()
+                    self?.hideIfNoWindows() // if it's just the alert window that's been presented, return to previous app
+                }
+            }
+        }
+        
+        if loved {
+            TrackProvider.unlove(track: track, by: artist, callback: callback).resume()
+        } else {
+            TrackProvider.love(track: track, by: artist, callback: callback).resume()
         }
     }
     
     /// Called when the "Settings" status item is pressed.
     @objc func displaySettingsWindow() {
+        if let settingsWindow = settingsWindow {
+            showWindow(settingsWindow)
+            return
+        }
+        
         let toolbar = SettingsToolbar()
         let settingsView = SettingsView(toolbar: toolbar)
         
@@ -175,6 +213,7 @@ extension AppDelegate: NSMenuDelegate {
         settingsWindow.contentView = NSHostingView(rootView: settingsView)
         settingsWindow.toolbar = toolbar
         
+        self.settingsWindow = settingsWindow
         showWindow(settingsWindow)
     }
     
