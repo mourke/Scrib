@@ -78,9 +78,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     @objc func nowPlayingChanged() {
         let isPlaying = musicApplication.playerState == .playing
-        
-        
-        #warning("This method isn't called when the player is paused i don't think")
 
         if isPlaying {
             let currentTrack = musicApplication.currentTrack!
@@ -103,7 +100,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             currentScrobbleMenuItem.attributedTitle = NSAttributedString(string: title)
         } else {
             isCurrentTrackLoved = nil
-            currentScrobbleMenuItem.title = "Nothing playing"
+            currentScrobbleMenuItem.attributedTitle = NSAttributedString(string: "Nothing playing")
         }
 
         updateActionMenuItemsEnabled()
@@ -127,15 +124,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func showWindow(_ window: NSWindow) {
-        window.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true) // activate if not done already
-    }
-    
-    func hideIfNoWindows() {
-        if NSApp.windows.count == 0 {
-            NSApp.hide(nil)
-            NSApp.unhideWithoutActivation()
+        if !NSApp.isActive {
+            NSApp.activate(ignoringOtherApps: true) // activate if not done already
         }
+        window.makeKeyAndOrderFront(nil)
     }
 }
 

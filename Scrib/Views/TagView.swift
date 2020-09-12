@@ -75,13 +75,9 @@ struct TagView: View {
             HStack {
                 Spacer()
                 
-                Button(action: cancel) {
-                    Text("Cancel")
-                }
-                Button(action: {
+                Button("Cancel", action: cancel)
+                Button("Add") {
                     self.add(self.type, self.tags.components(separatedBy: ", ").map({Tag(name: $0)}))
-                }) {
-                    Text("Add")
                 }
             }
         }

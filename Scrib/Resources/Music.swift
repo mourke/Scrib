@@ -35,7 +35,7 @@ import ScriptingBridge
 extension NSNotification.Name {
     
     /**
-     Posted by Music when now playing song changes. **Not** posted when player state changes, e.g. Pause.
+     Posted by Music when now playing song changes or when a song is paused. **Not** always posted when player state changes, e.g. Stop.
      
      The notification object is Music. The notification userInfo dictionary contains info about the currently playing song.
      */

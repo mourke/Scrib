@@ -70,10 +70,8 @@ fileprivate struct GeneralView: View {
                 }
             }
             
-            Button(action: {
+            Button("Check for updates") {
                 self.updater.checkForUpdates()
-            }) {
-                Text("Check for updates")
             }
             
             Spacer(minLength: 50)
@@ -88,7 +86,7 @@ fileprivate struct GeneralView: View {
                 Text("Show notifications")
             }
             
-            Spacer()
+            Spacer(minLength: 50)
             
             Toggle(isOn: Binding(get: { self.settings.scrobbling },
                                  set: { self.settings.changeValue(\.scrobbling, to: $0) })) {
@@ -115,21 +113,55 @@ fileprivate struct AccountView: View {
     var body: some View {
         VStack {
             if settings.isSignedIn {
-                HStack {
-                    Image(nsImage: NSImage(byReferencing: settings.user!.images[.extraLarge]!))
+                HStack(alignment: .center, spacing: 30) {
+                    userImage()
+                        .resizable()
+                        .frame(width: 100, height: 100)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.white, lineWidth: 4)
+                        )
+                        .shadow(radius: 10)
+                        .cornerRadius(50)
+                    
                     VStack {
-                        Text(settings.user!.username)
+                        Text("\(settings.user!.playCount)")
+                            .font(.title)
+                        Text("Scrobbles")
+                            .opacity(0.5)
+                    }
+                    
+                    VStack {
+                        Text("\(settings.user!.playlistCount)")
+                            .font(.title)
+                        Text("Playlists")
+                            .opacity(0.5)
+                    }
+                }
+                HStack {
+                    VStack(alignment: .leading) {
                         Text(settings.user!.realName)
-                        Text(settings.user!.country)
-                        Text(settings.user!.dateRegistered.description)
-                        Text("\(settings.user!.playCount) scrobbles")
-                        Text("\(settings.user!.playlistCount) playlists")
-                        Text("\(settings.user!.age) years old")
+                            .font(.title)
+                        Text("Scrobbling since \(DateFormatter.localizedString(from: settings.user!.dateRegistered, dateStyle: .long, timeStyle: .none))")
+                    }
+                    
+                    Spacer(minLength: 50)
+                    
+                    Button("Sign Out") {
+                        self.settings.changeValue(\.user, to: nil)
                     }
                 }
             } else {
                 Text("No user signed in")
             }
+        }
+    }
+    
+    private func userImage() -> Image {
+        if let image = settings.user!.images[.large] {
+            return Image(nsImage: NSImage(byReferencing: image))
+        } else {
+            return Image("Placeholder_Track")
         }
     }
 }
@@ -151,13 +183,33 @@ fileprivate struct AboutView: View {
                 .opacity(0.6)
                 .font(.caption)
             Spacer(minLength: 25)
-            Text("Made with ❤️ by Mark Bourke. Source available on Github.")
-                .font(.footnote)
+            HStack(spacing: 0) {
+                Text("Made with ❤️ by Mark Bourke. Source available on ")
+                    .font(.footnote)
+                Button(action: {
+                    NSWorkspace.shared.open(URL(string: "https://github.com/mourke/Scrib")!)
+                }) {
+                    Text("Github")
+                        .underline()
+                }
+                    .buttonStyle(HyperlinkButtonStyle())
+                    .font(.footnote)
+            }
+            
             Spacer()
             Text(settings.appCopyright)
                 .font(.footnote)
         }
             .padding(.vertical, 20)
+    }
+}
+
+struct HyperlinkButtonStyle: ButtonStyle {
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .padding(0)
+            .foregroundColor(configuration.isPressed ? Color(.linkColor).opacity(0.5) : Color(.linkColor))
+            .background(Color.clear)
     }
 }
 

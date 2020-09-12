@@ -47,7 +47,30 @@ extension AppDelegate: NSMenuDelegate {
         onboardingPopover.contentSize = NSSize(width: 400, height: 300)
         onboardingPopover.behavior = .transient
         onboardingPopover.animates = false
-        onboardingPopover.contentViewController = NSHostingController(rootView: OnboardingView())
+        let onboardingView = OnboardingView {
+            Auth.shared.getSession(username: $0, password: $1) { [weak self] (result) in
+                guard let self = self else { return }
+                switch result {
+                case .failure(let error as LFMError):
+                    // TODO: Error handling
+                    break
+                case .success(let session):
+                    UserProvider.getInfo(on: session.username) { [weak self] (result) in
+                        guard let self = self else { return }
+                        switch result {
+                        case .failure(let error as LFMError):
+                            // TODO: Error handling
+                            break
+                        case .success(let user):
+                            Settings.manager.changeValue(\.user, to: user)
+                            self.onboardingPopover.performClose(nil)
+                            self.statusItemButtonClicked(self.statusItem.button!) // open the menu
+                        }
+                    }.resume()
+                }
+            }.resume()
+        }
+        onboardingPopover.contentViewController = NSHostingController(rootView: onboardingView)
         
         menu = NSMenu()
         menu.autoenablesItems = false
@@ -105,10 +128,12 @@ extension AppDelegate: NSMenuDelegate {
         let tagWindow = NSWindow(contentRect: NSRect(x: 0, y: 0, width: 450, height: 250),
                                  styleMask: [.titled, .fullSizeContentView],
                                  backing: .buffered, defer: false)
+        tagWindow.isReleasedWhenClosed = false
+        
         let tagView = TagView(image: track.artworks?().first?.data,
                               add: { [weak self, track] (type, tags) in
             self?.tagWindow?.close()
-            self?.hideIfNoWindows() // it's just the alert window that's been presented, return to previous app
+            self?.tagWindow = nil
             
             let artist = track.artist!
             
@@ -124,7 +149,7 @@ extension AppDelegate: NSMenuDelegate {
             }
         }, cancel: { [weak self] in
             self?.tagWindow?.close()
-            self?.hideIfNoWindows() // it's just the alert window that's been presented, return to previous app
+            self?.tagWindow = nil
         })
         tagWindow.center()
         tagWindow.setFrameAutosaveName("Tag Window")
@@ -171,10 +196,12 @@ extension AppDelegate: NSMenuDelegate {
             alertWindow.isOpaque = false
             alertWindow.backgroundColor = .clear
             alertWindow.hasShadow = false
+            alertWindow.isReleasedWhenClosed = false
             alertWindow.center()
+            alertWindow.level = .statusBar
             
             self.favouriteWindow = alertWindow
-            self.showWindow(alertWindow)
+            alertWindow.orderFrontRegardless()
             
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1.5) {
                 NSAnimationContext.runAnimationGroup({ [weak self] (context) in
@@ -182,7 +209,7 @@ extension AppDelegate: NSMenuDelegate {
                     self?.favouriteWindow?.animator().alphaValue = 0.0
                 }) { [weak self] in
                     self?.favouriteWindow?.close()
-                    self?.hideIfNoWindows() // if it's just the alert window that's been presented, return to previous app
+                    self?.favouriteWindow = nil
                 }
             }
         }
@@ -205,13 +232,14 @@ extension AppDelegate: NSMenuDelegate {
         let settingsView = SettingsView(toolbar: toolbar)
         
         let settingsWindow = NSWindow(contentRect: .zero,
-                                  styleMask: [.titled, .closable, .fullSizeContentView],
-                                  backing: .buffered, defer: false)
+                                      styleMask: [.titled, .closable, .fullSizeContentView],
+                                      backing: .buffered, defer: false)
         settingsWindow.center()
         settingsWindow.setFrameAutosaveName("Settings Window")
         settingsWindow.title = "Settings"
         settingsWindow.contentView = NSHostingView(rootView: settingsView)
         settingsWindow.toolbar = toolbar
+        settingsWindow.isReleasedWhenClosed = false
         
         self.settingsWindow = settingsWindow
         showWindow(settingsWindow)

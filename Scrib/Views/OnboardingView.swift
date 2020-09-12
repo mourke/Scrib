@@ -24,12 +24,17 @@
 //
 
 import SwiftUI
-import LastFMKit
 
 struct OnboardingView: View {
     
     @State private var username = ""
     @State private var password = ""
+    
+    private let logInAction: (String, String) -> Void
+    
+    init(_ logInAction: @escaping (String, String) -> Void) {
+        self.logInAction = logInAction
+    }
     
     var body: some View {
         ZStack {
@@ -55,28 +60,9 @@ struct OnboardingView: View {
                     .background(Color(.controlBackgroundColor))
                     .cornerRadius(5)
                     .padding()
-                Button(action: {
-                    Auth.shared.getSession(username: self.username, password: self.password) { (result) in
-                        switch result {
-                        case .failure(let error as LFMError):
-                            // TODO: Error handling
-                            break
-                        case .success(let session):
-                            UserProvider.getInfo(on: session.username) { (result) in
-                                switch result {
-                                case .failure(let error as LFMError):
-                                    // TODO: Error handling
-                                    break
-                                case .success(let user):
-                                    Settings.manager.changeValue(\.user, to: user)
-                                    break
-                                }
-                            }.resume()
-                        }
-                    }.resume()
-                }, label: {
-                    Text("Login")
-                })
+                Button("Login") {
+                    self.logInAction(self.username, self.password)
+                }
                     .buttonStyle(LoginButtonStyle())
             }
         }
@@ -98,7 +84,7 @@ struct LoginButtonStyle: ButtonStyle {
 #if DEBUG
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingView()
+        OnboardingView { (_,_) in }
     }
 }
 #endif
