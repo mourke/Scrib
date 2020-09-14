@@ -55,6 +55,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     var signedInObservation: NSKeyValueObservation!
+    
+    var scrobbleWorkItem: DispatchWorkItem!
 
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         let _ = Updater.shared // initialise library
@@ -83,13 +85,28 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             let currentTrack = musicApplication.currentTrack!
             let song = currentTrack.name!
             let artist = currentTrack.artist!
+            let duration = currentTrack.duration!.rounded(.down)
+            let scrobblePercentage = Double(Settings.manager.scrobblePercentage)/100.0
+            let dispatchAfterTime = min(max((scrobblePercentage * duration) - musicApplication.playerPosition!, 0), 240) // if the song is restarted past the scrobble distance, scrobble right away. Scrobbling occurs automatically after 4 minutes (240 seconds)
             
-            TrackProvider.updateNowPlaying(track: song,
-                                           by: artist,
-                                           on: currentTrack.album,
-                                           position: currentTrack.trackNumber,
-                                           albumArtist: currentTrack.albumArtist,
-                                           duration: currentTrack.duration).resume()
+            let scrobbleTrack = ScrobbleTrack(name: song,
+                                              artist: artist,
+                                              album: currentTrack.album,
+                                              albumArtist: currentTrack.albumArtist,
+                                              positionInAlbum: currentTrack.trackNumber,
+                                              duration: Int(duration),
+                                              timestamp: Date(timeIntervalSinceNow: dispatchAfterTime),
+                                              chosenByUser: true)
+            
+            TrackProvider.updateNowPlaying(track: scrobbleTrack).resume()
+            
+            scrobbleWorkItem?.cancel()
+            scrobbleWorkItem = DispatchWorkItem {
+                TrackProvider.scrobble(tracks: [scrobbleTrack], callback: nil).resume()
+            }
+            
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + dispatchAfterTime, execute: scrobbleWorkItem)
+
             isCurrentTrackLoved = false
             var title = "\(song)\n\(artist)"
             
@@ -99,6 +116,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             currentScrobbleMenuItem.attributedTitle = NSAttributedString(string: title)
         } else {
+            scrobbleWorkItem?.cancel()
             isCurrentTrackLoved = nil
             currentScrobbleMenuItem.attributedTitle = NSAttributedString(string: "Nothing playing")
         }

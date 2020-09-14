@@ -40,6 +40,14 @@ extension NSNotification.Name {
      The notification object is Music. The notification userInfo dictionary contains info about the currently playing song.
      */
     static let MusicPlayerInfo = NSNotification.Name(rawValue: "com.apple.Music.playerInfo")
+    
+    static let MusicPlayer = NSNotification.Name(rawValue: "com.apple.Music.player")
+    
+    static let MusicEQ = NSNotification.Name(rawValue: "com.apple.Music.eq")
+    
+    static let MusicWeb = NSNotification.Name(rawValue: "com.apple.Music.web")
+    
+    static let MusicVisualizerService = NSNotification.Name(rawValue: "com.apple.Music.VisualizerService")
 }
 
 @objc enum MusicEKnd: UInt32 {
