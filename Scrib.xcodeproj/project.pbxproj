@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4D16F16225169CB100E350B5 /* Notifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D16F16125169CB100E350B5 /* Notifier.swift */; };
 		4D20C56F24FAA9F500EF0711 /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D20C56E24FAA9F500EF0711 /* Updater.swift */; };
 		4D3EA2F624D58667008C7495 /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3EA2F524D58667008C7495 /* VisualEffectView.swift */; };
 		4D3EA31824D6CE34008C7495 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3EA31724D6CE34008C7495 /* Settings.swift */; };
@@ -51,6 +52,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		4D16F16125169CB100E350B5 /* Notifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifier.swift; sourceTree = "<group>"; };
 		4D20C56E24FAA9F500EF0711 /* Updater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Updater.swift; sourceTree = "<group>"; };
 		4D3EA2F524D58667008C7495 /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 		4D3EA31724D6CE34008C7495 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				4D3FF31E24D42E8800B19651 /* main.swift */,
 				4D3EA31724D6CE34008C7495 /* Settings.swift */,
 				4D20C56E24FAA9F500EF0711 /* Updater.swift */,
+				4D16F16125169CB100E350B5 /* Notifier.swift */,
 			);
 			path = Scrib;
 			sourceTree = "<group>";
@@ -343,6 +346,7 @@
 				4D3EA34A24D85F68008C7495 /* NSTextField+FocusRing.swift in Sources */,
 				4DCA59F224E5E54F006F16C7 /* SettingsToolbar.swift in Sources */,
 				4D3FF31F24D42E8900B19651 /* main.swift in Sources */,
+				4D16F16225169CB100E350B5 /* Notifier.swift in Sources */,
 				4D3FF31924D4283900B19651 /* TagView.swift in Sources */,
 				4DCA59FC24E70635006F16C7 /* Music.swift in Sources */,
 			);

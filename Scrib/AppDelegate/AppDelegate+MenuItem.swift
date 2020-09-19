@@ -228,6 +228,16 @@ extension AppDelegate: NSMenuDelegate {
             return
         }
         
+        // update user profile data
+        if let username = Settings.manager.user?.username {
+            UserProvider.getInfo(on: username) { (result) in
+                switch result {
+                case .success(let user): Settings.manager.changeValue(\.user, to: user)
+                default: break
+                }
+            }.resume()
+        }
+        
         let toolbar = SettingsToolbar()
         let settingsView = SettingsView(toolbar: toolbar)
         

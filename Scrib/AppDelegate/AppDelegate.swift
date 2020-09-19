@@ -55,6 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     var signedInObservation: NSKeyValueObservation!
+    var startOnLoginObservation: NSKeyValueObservation!
     
     var scrobbleWorkItem: DispatchWorkItem!
 
@@ -75,13 +76,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         DistributedNotificationCenter.default().addObserver(self, selector: #selector(nowPlayingChanged), name: .MusicPlayerInfo, object: nil)
         
-        SMLoginItemSetEnabled("com.mourke.scrib-launcher" as CFString, true)
+        startOnLoginObservation = Settings.manager.observe(\.startOnLogin, options: [.new, .initial]) { (settings, change) in
+            SMLoginItemSetEnabled("com.mourke.scrib-launcher" as CFString, settings.startOnLogin)
+        }
     }
     
     @objc func nowPlayingChanged() {
         let isPlaying = musicApplication.playerState == .playing
 
-        if isPlaying {
+        if isPlaying && Settings.manager.isSignedIn {
             let currentTrack = musicApplication.currentTrack!
             let song = currentTrack.name!
             let artist = currentTrack.artist!
@@ -95,14 +98,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                                               albumArtist: currentTrack.albumArtist,
                                               positionInAlbum: currentTrack.trackNumber,
                                               duration: Int(duration),
-                                              timestamp: Date(timeIntervalSinceNow: dispatchAfterTime),
+                                              timestamp: Date.distantFuture, // set this later
                                               chosenByUser: true)
             
             TrackProvider.updateNowPlaying(track: scrobbleTrack).resume()
             
             scrobbleWorkItem?.cancel()
             scrobbleWorkItem = DispatchWorkItem {
-                TrackProvider.scrobble(tracks: [scrobbleTrack], callback: nil).resume()
+                scrobbleTrack.timestamp = Date()
+                TrackProvider.scrobble(tracks: [scrobbleTrack]) { (result) in
+                    switch result {
+                    case .success(let results):
+                        let scrobble = results.first!
+                        Notifier.shared.notifiy(of: scrobble)
+                    case .failure(let error as LFMError):
+                        // TODO: see if this is recoverable and if it is retry
+                        break;
+                    }
+                }.resume()
             }
             
             DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + dispatchAfterTime, execute: scrobbleWorkItem)
