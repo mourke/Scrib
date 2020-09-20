@@ -24,6 +24,7 @@
 //
 
 import SwiftUI
+import LastFMKit
 
 struct SettingsView: View {
     
@@ -110,6 +111,10 @@ fileprivate struct AccountView: View {
     
     @ObservedObject private var settings = Settings.manager
     
+    private var user: User? {
+        return settings.user
+    }
+    
     var body: some View {
         VStack {
             if settings.isSignedIn {
@@ -125,14 +130,15 @@ fileprivate struct AccountView: View {
                         .cornerRadius(50)
                     
                     VStack {
-                        Text("\(settings.user!.playCount)")
+                        scrobbles()
                             .font(.title)
+                            
                         Text("Scrobbles")
                             .opacity(0.5)
                     }
                     
                     VStack {
-                        Text("\(settings.user!.playlistCount)")
+                        playlists()
                             .font(.title)
                         Text("Playlists")
                             .opacity(0.5)
@@ -140,28 +146,72 @@ fileprivate struct AccountView: View {
                 }
                 HStack {
                     VStack(alignment: .leading) {
-                        Text(settings.user!.realName)
+                        realName()
                             .font(.title)
-                        Text("Scrobbling since \(DateFormatter.localizedString(from: settings.user!.dateRegistered, dateStyle: .long, timeStyle: .none))")
+                        scrobblingSince()
                     }
                     
                     Spacer(minLength: 50)
                     
                     Button("Sign Out") {
+                        Auth.shared.removeSession()
                         self.settings.changeValue(\.user, to: nil)
                     }
+                        /*.unredacted()*/
                 }
             } else {
                 Text("No user signed in")
+                        /*.unredacted()*/
             }
         }
+            /*.redacted(reason:  user == nil ? .placeholder : .init())*/
     }
     
     private func userImage() -> Image {
-        if let image = settings.user!.images[.large] {
+        if let image = user?.images[.large] {
             return Image(nsImage: NSImage(byReferencing: image))
         } else {
             return Image("Placeholder_Track")
+        }
+    }
+    
+    private func username() -> Text {
+        if let username = user?.username {
+            return Text(username)
+        } else {
+            return Text(verbatim: "Username")
+        }
+    }
+    
+    private func realName() -> Text {
+        if let realName = user?.realName {
+            return Text(realName)
+        } else {
+            return Text(verbatim: "Real Name")
+        }
+    }
+    
+    private func scrobbles() -> Text {
+        if let playCount = user?.playCount {
+        return Text("\(playCount)")
+        } else {
+            return Text(verbatim: "No")
+        }
+    }
+    
+    private func playlists() -> Text {
+        if let playlistCount = user?.playlistCount {
+            return Text("\(playlistCount)")
+        } else {
+            return Text(verbatim: "No")
+        }
+    }
+    
+    private func scrobblingSince() -> Text {
+        if let date = user?.dateRegistered {
+            return Text("Scrobbling since \(DateFormatter.localizedString(from: date, dateStyle: .long, timeStyle: .none))")
+        } else {
+            return Text("Not a user")
         }
     }
 }

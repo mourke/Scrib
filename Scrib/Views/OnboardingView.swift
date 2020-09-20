@@ -25,16 +25,24 @@
 
 import SwiftUI
 
-struct OnboardingView: View {
+protocol OnboardingViewModelProtocol: ObservableObject {
+    var authenticationError: Error? { get set }
+    func login(username: String, password: String, callback: @escaping (Bool) -> Void)
+}
+
+struct OnboardingView<ViewModel: OnboardingViewModelProtocol>: View {
     
     @State private var username = ""
     @State private var password = ""
     
-    private let logInAction: (String, String) -> Void
-    
-    init(_ logInAction: @escaping (String, String) -> Void) {
-        self.logInAction = logInAction
+    // Remove these once the entire app is in swiftUI
+    struct ButtonHandlers {
+        var loginButtonPressed: (() -> Void)?
+        var successfullyLoggedIn: (() -> Void)?
     }
+    var buttonHandlers = ButtonHandlers()
+    
+    @ObservedObject var viewModel: ViewModel
     
     var body: some View {
         ZStack {
@@ -46,23 +54,41 @@ struct OnboardingView: View {
             VStack {
                 Image("Logo")
                     .padding(.bottom, 30)
-                TextField("Username", text: $username)
+                TextField("Username", text: $username, onEditingChanged: { (editing) in
+                    self.viewModel.authenticationError = nil // reset error UI once user begins typing
+                }, onCommit: {
+                    // TODO: Move focus to password view
+                })
                     .textFieldStyle(PlainTextFieldStyle())
                     .font(.callout) // set the inner Text Field Font
                     .padding(10)
                     .background(Color(.controlBackgroundColor))
                     .cornerRadius(5)
                     .padding([.horizontal, .top])
-                SecureField("Password", text: $password)
+                SecureField("Password", text: $password, onCommit: {
+                    // TODO: submit
+                })
                     .textFieldStyle(PlainTextFieldStyle())
                     .font(.callout) // set the inner Text Field Font
                     .padding(10)
                     .background(Color(.controlBackgroundColor))
                     .cornerRadius(5)
-                    .padding()
-                Button("Login") {
-                    self.logInAction(self.username, self.password)
+                    .padding([.horizontal, .top])
+                if viewModel.authenticationError != nil {
+                    Text(viewModel.authenticationError.unsafelyUnwrapped.localizedDescription)
+                        .foregroundColor(.white)
                 }
+                Button("Login") {
+                    self.viewModel.login(username: self.username,
+                                         password: self.password) { (successful) in
+                        if successful {
+                            self.buttonHandlers.successfullyLoggedIn?()
+                        }
+                    }
+                    
+                    self.buttonHandlers.loginButtonPressed?()
+                }
+                    .padding(.top)
                     .buttonStyle(LoginButtonStyle())
             }
         }
@@ -84,7 +110,7 @@ struct LoginButtonStyle: ButtonStyle {
 #if DEBUG
 struct OnboardingView_Previews: PreviewProvider {
     static var previews: some View {
-        OnboardingView { (_,_) in }
+        OnboardingView(viewModel: OnboardingViewModel())
     }
 }
 #endif

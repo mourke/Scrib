@@ -69,18 +69,20 @@ class Settings: NSObject, ObservableObject {
         }
     }
     
-    /** The currently signed in user. */
+    /** The currently signed in user info. */
     @objc dynamic private(set) var user: User? {
         willSet {
             objectWillChange.send()
         }
     }
     
-    var isSignedIn: Bool {
-        return user != nil
+    /** Whether anyone has signed in. This property can be observed using KVO and an objectWillChange notification will be sent when userHasAuthenticated has changed. */
+    @objc dynamic var isSignedIn: Bool {
+        return Auth.shared.userHasAuthenticated
     }
     
     private var writeWorkItem: DispatchWorkItem?
+    private var signedInObservation: NSKeyValueObservation!
     
     override init() {
         startOnLogin = UserDefaults.standard.bool(forKey: #keyPath(Settings.startOnLogin))
@@ -102,6 +104,19 @@ class Settings: NSObject, ObservableObject {
         }
         
         super.init()
+        
+        signedInObservation = Auth.shared.observe(\.userHasAuthenticated, options: .prior) { [unowned self] (auth, change) in
+            if change.isPrior {
+                self.willChangeValue(for: \.isSignedIn)
+                if Thread.isMainThread {
+                    self.objectWillChange.send()
+                } else {
+                    DispatchQueue.main.sync { self.objectWillChange.send() }
+                }
+            } else {
+                self.didChangeValue(for: \.isSignedIn)
+            }
+        }
     }
     
     func changeValue<Value>(_ key: KeyPath<Settings, Value>, to newValue: Value) {

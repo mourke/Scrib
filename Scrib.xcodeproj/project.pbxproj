@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		4D16F16225169CB100E350B5 /* Notifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D16F16125169CB100E350B5 /* Notifier.swift */; };
+		4D16F1672517F59600E350B5 /* Scrobbler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D16F1662517F59600E350B5 /* Scrobbler.swift */; };
+		4D16F16E251809BD00E350B5 /* TagViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D16F16D251809BD00E350B5 /* TagViewModel.swift */; };
+		4D16F1712518103600E350B5 /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D16F1702518103600E350B5 /* OnboardingViewModel.swift */; };
 		4D20C56F24FAA9F500EF0711 /* Updater.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D20C56E24FAA9F500EF0711 /* Updater.swift */; };
 		4D3EA2F624D58667008C7495 /* VisualEffectView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3EA2F524D58667008C7495 /* VisualEffectView.swift */; };
 		4D3EA31824D6CE34008C7495 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D3EA31724D6CE34008C7495 /* Settings.swift */; };
@@ -53,6 +56,9 @@
 
 /* Begin PBXFileReference section */
 		4D16F16125169CB100E350B5 /* Notifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notifier.swift; sourceTree = "<group>"; };
+		4D16F1662517F59600E350B5 /* Scrobbler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scrobbler.swift; sourceTree = "<group>"; };
+		4D16F16D251809BD00E350B5 /* TagViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TagViewModel.swift; sourceTree = "<group>"; };
+		4D16F1702518103600E350B5 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewModel.swift; sourceTree = "<group>"; };
 		4D20C56E24FAA9F500EF0711 /* Updater.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Updater.swift; sourceTree = "<group>"; };
 		4D3EA2F524D58667008C7495 /* VisualEffectView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisualEffectView.swift; sourceTree = "<group>"; };
 		4D3EA31724D6CE34008C7495 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -98,6 +104,26 @@
 				EB79A4AE5D1067A5EE0C3E38 /* Pods-Scrib.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		4D16F16A2517FD3D00E350B5 /* View Models */ = {
+			isa = PBXGroup;
+			children = (
+				4D16F16D251809BD00E350B5 /* TagViewModel.swift */,
+				4D16F1702518103600E350B5 /* OnboardingViewModel.swift */,
+			);
+			path = "View Models";
+			sourceTree = "<group>";
+		};
+		4D16F16B2517FD6B00E350B5 /* Managers */ = {
+			isa = PBXGroup;
+			children = (
+				4D3EA31724D6CE34008C7495 /* Settings.swift */,
+				4D20C56E24FAA9F500EF0711 /* Updater.swift */,
+				4D16F16125169CB100E350B5 /* Notifier.swift */,
+				4D16F1662517F59600E350B5 /* Scrobbler.swift */,
+			);
+			path = Managers;
 			sourceTree = "<group>";
 		};
 		4D3EA2D424D583DD008C7495 /* Resources */ = {
@@ -150,14 +176,13 @@
 				4D3EA34724D85F54008C7495 /* Extensions */,
 				4D3EA2D424D583DD008C7495 /* Resources */,
 				4D3FF32124D4300500B19651 /* AppDelegate */,
+				4D16F16A2517FD3D00E350B5 /* View Models */,
 				4D3FF32024D42FF200B19651 /* Views */,
 				4D3FF30F24D35F3400B19651 /* Info.plist */,
 				4D3FF31024D35F3400B19651 /* Scrib.entitlements */,
 				4D3FF30924D35F3400B19651 /* Preview Content */,
 				4D3FF31E24D42E8800B19651 /* main.swift */,
-				4D3EA31724D6CE34008C7495 /* Settings.swift */,
-				4D20C56E24FAA9F500EF0711 /* Updater.swift */,
-				4D16F16125169CB100E350B5 /* Notifier.swift */,
+				4D16F16B2517FD6B00E350B5 /* Managers */,
 			);
 			path = Scrib;
 			sourceTree = "<group>";
@@ -340,8 +365,11 @@
 				4D3FF31724D427BD00B19651 /* OnboardingView.swift in Sources */,
 				4D3FF30624D35F3000B19651 /* SettingsView.swift in Sources */,
 				4D20C56F24FAA9F500EF0711 /* Updater.swift in Sources */,
+				4D16F16E251809BD00E350B5 /* TagViewModel.swift in Sources */,
 				4D3FF30424D35F3000B19651 /* AppDelegate.swift in Sources */,
 				4D3EA2F624D58667008C7495 /* VisualEffectView.swift in Sources */,
+				4D16F1672517F59600E350B5 /* Scrobbler.swift in Sources */,
+				4D16F1712518103600E350B5 /* OnboardingViewModel.swift in Sources */,
 				4D3EA31824D6CE34008C7495 /* Settings.swift in Sources */,
 				4D3EA34A24D85F68008C7495 /* NSTextField+FocusRing.swift in Sources */,
 				4DCA59F224E5E54F006F16C7 /* SettingsToolbar.swift in Sources */,

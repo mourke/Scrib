@@ -26,27 +26,29 @@
 import SwiftUI
 import LastFMKit.LFMTaggingType
 
-struct TagView: View {
+protocol TagViewModelProtocol: ObservableObject {
+    var image: NSImage { get set }
+    func tagItem(of type: TaggingType, with tags: [Tag])
+}
+
+struct TagView<ViewModel: TagViewModelProtocol>: View {
     
-    @State var type: TaggingType = .track
-    @State var tags = ""
+    @State private var type: TaggingType = .track
+    @State private var tags = ""
     
-    private let add: (TaggingType, [Tag]) -> Void
-    private let cancel: () -> Void
-    private let image: NSImage?
-    
-    init(image: NSImage? = nil,
-         add: @escaping (TaggingType, [Tag]) -> Void,
-         cancel: @escaping () -> Void) {
-        self.add = add
-        self.cancel = cancel
-        self.image = image
+    // Remove these once the entire app is in swiftUI
+    struct ButtonHandlers {
+        var addButtonPressed: (() -> Void)?
+        var cancelButtonPressed: (() -> Void)?
     }
+    var buttonHandlers = ButtonHandlers()
+    
+    @ObservedObject var viewModel: ViewModel
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack(alignment: .center, spacing: 10) {
-                Image(nsImage: image ?? NSImage(named: "Placeholder_Track")!)
+                Image(nsImage: viewModel.image)
                     .resizable()
                     .frame(width: 80, height: 80)
                     .scaledToFit()
@@ -75,24 +77,16 @@ struct TagView: View {
             HStack {
                 Spacer()
                 
-                Button("Cancel", action: cancel)
+                Button("Cancel") {
+                    self.buttonHandlers.cancelButtonPressed?()
+                }
                 Button("Add") {
-                    self.add(self.type, self.tags.components(separatedBy: ", ").map({Tag(name: $0)}))
+                    let tags = self.tags.components(separatedBy: ", ").map({Tag(name: $0)})
+                    self.viewModel.tagItem(of: self.type, with: tags)
+                    self.buttonHandlers.addButtonPressed?()
                 }
             }
         }
         .padding()
     }
 }
-
-#if DEBUG
-struct TagView_Previews: PreviewProvider {
-    static var previews: some View {
-        TagView(add: { (_, _) in
-            
-        }, cancel: {
-            
-        })
-    }
-}
-#endif

@@ -33,6 +33,8 @@ class Updater: ObservableObject {
      Determines the frequency in which the the version check is performed.
      */
     enum CheckInterval: TimeInterval {
+        /// Version check performed every hour.
+        case hourly = 3600
         /// Version check performed once a day.
         case daily = 86400
         /// Version check performed once a week.
@@ -40,10 +42,12 @@ class Updater: ObservableObject {
         /// Version check performed once a month.
         case monthly = 2628e6
         
-        static let arrayValue: [Self] = [.daily, .weekly, .monthly]
+        static let arrayValue: [Self] = [.hourly, .daily, .weekly, .monthly]
         
         var stringValue: String {
             switch self {
+            case .hourly:
+                return "Hourly"
             case .daily:
                 return "Daily"
             case .weekly:
@@ -79,19 +83,18 @@ class Updater: ObservableObject {
     private var checkIntervalObserver: NSKeyValueObservation!
     
     
-    init() {
-        updater.feedURL = URL(string: "https://mourke.github.io/Scrib/appcast.xml")
+    private init() {
         automaticallyChecksForUpdates = updater.automaticallyChecksForUpdates
         updateCheckInterval = CheckInterval(rawValue: updater.updateCheckInterval) ?? .weekly
         
-        automaticUpdatesObserver = updater.observe(\.automaticallyChecksForUpdates, options: .new) { (updater, change) in
+        automaticUpdatesObserver = updater.observe(\.automaticallyChecksForUpdates, options: .new) { [unowned self] (updater, change) in
             if let newValue = change.newValue,
                 newValue != self.automaticallyChecksForUpdates { // stop infinite loop
                 self.automaticallyChecksForUpdates = newValue
             }
         }
         
-        checkIntervalObserver = updater.observe(\.updateCheckInterval, options: .new) { (updater, change) in
+        checkIntervalObserver = updater.observe(\.updateCheckInterval, options: .new) { [unowned self] (updater, change) in
             if let newValue = change.newValue,
                 newValue != self.updateCheckInterval.rawValue { // stop infinite loop
                 self.updateCheckInterval = CheckInterval(rawValue: updater.updateCheckInterval) ?? .weekly

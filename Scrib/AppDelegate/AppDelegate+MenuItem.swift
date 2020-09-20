@@ -47,28 +47,12 @@ extension AppDelegate: NSMenuDelegate {
         onboardingPopover.contentSize = NSSize(width: 400, height: 300)
         onboardingPopover.behavior = .transient
         onboardingPopover.animates = false
-        let onboardingView = OnboardingView {
-            Auth.shared.getSession(username: $0, password: $1) { [weak self] (result) in
-                guard let self = self else { return }
-                switch result {
-                case .failure(let error as LFMError):
-                    // TODO: Error handling
-                    break
-                case .success(let session):
-                    UserProvider.getInfo(on: session.username) { [weak self] (result) in
-                        guard let self = self else { return }
-                        switch result {
-                        case .failure(let error as LFMError):
-                            // TODO: Error handling
-                            break
-                        case .success(let user):
-                            Settings.manager.changeValue(\.user, to: user)
-                            self.onboardingPopover.performClose(nil)
-                            self.statusItemButtonClicked(self.statusItem.button!) // open the menu
-                        }
-                    }.resume()
-                }
-            }.resume()
+        var onboardingView = OnboardingView(viewModel: OnboardingViewModel())
+        
+        onboardingView.buttonHandlers.successfullyLoggedIn = { [weak self] in
+            guard let self = self else { return }
+            self.onboardingPopover.performClose(nil)
+            self.statusItemButtonClicked(self.statusItem.button!) // open the status menu
         }
         onboardingPopover.contentViewController = NSHostingController(rootView: onboardingView)
         
@@ -130,27 +114,16 @@ extension AppDelegate: NSMenuDelegate {
                                  backing: .buffered, defer: false)
         tagWindow.isReleasedWhenClosed = false
         
-        let tagView = TagView(image: track.artworks?().first?.data,
-                              add: { [weak self, track] (type, tags) in
+        var tagView = TagView(viewModel: TagViewModel(track: track))
+        
+        let closeHandler = { [weak self] in
             self?.tagWindow?.close()
             self?.tagWindow = nil
-            
-            let artist = track.artist!
-            
-            switch type {
-            case .album:
-                AlbumProvider.add(tags: tags, to: track.album!, by: track.albumArtist ?? artist, callback: nil)
-            case .artist:
-                ArtistProvider.add(tags: tags, to: artist, callback: nil)
-            case .track:
-                TrackProvider.add(tags: tags, to: track.name!, by: artist, callback: nil)
-            default:
-                fatalError()
-            }
-        }, cancel: { [weak self] in
-            self?.tagWindow?.close()
-            self?.tagWindow = nil
-        })
+        }
+        
+        tagView.buttonHandlers.addButtonPressed = closeHandler
+        tagView.buttonHandlers.cancelButtonPressed = closeHandler
+        
         tagWindow.center()
         tagWindow.setFrameAutosaveName("Tag Window")
         tagWindow.contentView = NSHostingView(rootView: tagView)
@@ -223,19 +196,19 @@ extension AppDelegate: NSMenuDelegate {
     
     /// Called when the "Settings" status item is pressed.
     @objc func displaySettingsWindow() {
-        if let settingsWindow = settingsWindow {
-            showWindow(settingsWindow)
-            return
-        }
-        
         // update user profile data
-        if let username = Settings.manager.user?.username {
+        if let username = Session.shared?.username {
             UserProvider.getInfo(on: username) { (result) in
                 switch result {
                 case .success(let user): Settings.manager.changeValue(\.user, to: user)
                 default: break
                 }
             }.resume()
+        }
+        
+        if let settingsWindow = settingsWindow {
+            showWindow(settingsWindow)
+            return
         }
         
         let toolbar = SettingsToolbar()
@@ -257,7 +230,7 @@ extension AppDelegate: NSMenuDelegate {
     
     /// Called when the "Go to Last.fm profile" status item is pressed.
     @objc func openProfileUrl() {
-        if let username = Settings.manager.user?.username {
+        if let username = Session.shared?.username {
             NSWorkspace.shared.open(URL(string: "https://www.last.fm/user/\(username)")!)
         }
     }

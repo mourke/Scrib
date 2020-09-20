@@ -54,9 +54,11 @@ class Notifier : NSObject, UNUserNotificationCenterDelegate {
     }
     
     
-    func notifiy(of scrobble: ScrobbleResult) {
+    func notifiy(of scrobbles: [ScrobbleResult]) {
+        let scrobble = scrobbles.first!
+        
         guard Settings.manager.enableNotifications,
-            let username = Settings.manager.user?.username.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else { return }
+            let username = Session.shared?.username.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) else { return }
         
         let content = UNMutableNotificationContent()
         content.sound = nil
